@@ -1,0 +1,39 @@
+"use client"
+
+import { useEffect } from "react"
+import { useSettingsStore } from "@/stores/settings-store"
+
+export function Providers() {
+  const { direction, theme } = useSettingsStore()
+
+  useEffect(() => {
+    const html = document.documentElement
+    html.setAttribute("dir", direction)
+    html.setAttribute("lang", direction === "rtl" ? "ar" : "en")
+  }, [direction])
+
+  useEffect(() => {
+    const html = document.documentElement
+    if (theme === "dark") {
+      html.classList.add("dark")
+    } else {
+      html.classList.remove("dark")
+    }
+  }, [theme])
+
+  useEffect(() => {
+    const html = document.documentElement
+    const stored = window.sessionStorage.getItem("monest-settings")
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        const state = parsed.state || parsed
+        if (state.direction) html.setAttribute("dir", state.direction)
+        if (state.direction) html.setAttribute("lang", state.direction === "rtl" ? "ar" : "en")
+        if (state.theme === "dark") html.classList.add("dark")
+      } catch {}
+    }
+  }, [])
+
+  return null
+}
