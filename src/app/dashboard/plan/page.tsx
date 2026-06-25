@@ -2,24 +2,42 @@
 
 import { useState } from "react"
 import { useSettingsStore } from "@/stores/settings-store"
-import { Crown, Users, Star, Check, X, Clock, CreditCard, Download } from "lucide-react"
+import { Crown, Users, Star, Check, X, Clock, CalendarDays, CreditCard, Download } from "lucide-react"
 import { SARIcon } from "@/components/ui/sar-icon"
 
-const platformPlan = {
-  name: { ar: "الباقة الأساسية الدائمة", en: "Lifetime Basic Plan" },
-  desc: { ar: "مدى الحياة - دفع لمرة واحدة", en: "Lifetime - One-time payment" },
-  price: 4999,
+const platformPlans = [
+  {
+    id: "monthly",
+    name: { ar: "اشتراك شهري", en: "Monthly" },
+    price: 499,
+    period: { ar: "شهرياً", en: "/month" },
+    popular: false,
+  },
+  {
+    id: "yearly",
+    name: { ar: "اشتراك سنوي", en: "Yearly" },
+    price: 4999,
+    period: { ar: "سنوياً", en: "/year" },
+    popular: true,
+    badge: { ar: "وفر 17%", en: "Save 17%" },
+  },
+]
+
+const currentPlan = {
+  name: { ar: "الباقة السنوية", en: "Yearly Plan" },
   startDate: "2026-05-01",
+  endDate: "2027-05-01",
+  price: 4999,
   status: "active",
+  remaining: { ar: "10 شهور", en: "10 months" },
 }
 
 const communityTiers = [
   {
     id: "silver",
     name: { ar: "الفضية", en: "Silver" },
+    desc: { ar: "عضوية دائمة", en: "Lifetime membership" },
     price: 999,
-    period: { ar: "شهرياً", en: "/month" },
-    popular: false,
     features: [
       { ar: "دخول المجتمع الحصري", en: "Exclusive community access" },
       { ar: "اجتماعات أسبوعية", en: "Weekly meetings" },
@@ -30,8 +48,8 @@ const communityTiers = [
   {
     id: "gold",
     name: { ar: "الذهبية", en: "Gold" },
+    desc: { ar: "عضوية دائمة", en: "Lifetime membership" },
     price: 2499,
-    period: { ar: "شهرياً", en: "/month" },
     popular: true,
     features: [
       { ar: "كل مزايا الفضة", en: "All Silver features" },
@@ -79,11 +97,12 @@ export default function PlanPage() {
           </p>
         </div>
 
+        {/* Current Plan Details */}
         <div className="p-5">
           <div className="flex items-start justify-between mb-5">
             <div>
-              <p className="text-lg font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{platformPlan.name[lang]}</p>
-              <p className="text-xs text-[#666666] dark:text-[#B3B3B3]">{platformPlan.desc[lang]}</p>
+              <p className="text-lg font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{currentPlan.name[lang]}</p>
+              <p className="text-xs text-[#666666] dark:text-[#B3B3B3]">{currentPlan.price.toLocaleString("en-US")} <SARIcon className="w-3.5 h-3.5" /> {lang === "ar" ? "سنوياً" : "/year"}</p>
             </div>
             <span className="px-3 py-1 text-[10px] font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 shrink-0">
               {lang === "ar" ? "نشط" : "Active"}
@@ -93,24 +112,54 @@ export default function PlanPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="p-3 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
               <p className="text-[10px] text-[#999999] mb-1">{lang === "ar" ? "تاريخ البدء" : "Start Date"}</p>
-              <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{platformPlan.startDate}</p>
+              <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{currentPlan.startDate}</p>
             </div>
             <div className="p-3 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
               <p className="text-[10px] text-[#999999] mb-1">{lang === "ar" ? "تاريخ الانتهاء" : "End Date"}</p>
-              <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-                {lang === "ar" ? "غير محدد (مدى الحياة)" : "Unlimited (Lifetime)"}
-              </p>
+              <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{currentPlan.endDate}</p>
             </div>
             <div className="p-3 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
               <p className="text-[10px] text-[#999999] mb-1">{lang === "ar" ? "المتبقي" : "Remaining"}</p>
-              <p className="text-sm font-bold text-green-600 dark:text-green-400">{lang === "ar" ? "غير محدد" : "Unlimited"}</p>
+              <p className="text-sm font-bold text-green-600 dark:text-green-400">{currentPlan.remaining[lang]}</p>
             </div>
             <div className="p-3 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
               <p className="text-[10px] text-[#999999] mb-1">{lang === "ar" ? "المبلغ المدفوع" : "Amount Paid"}</p>
               <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] flex items-center gap-1">
-                {platformPlan.price.toLocaleString("en-US")} <SARIcon className="w-4 h-4" />
+                {currentPlan.price.toLocaleString("en-US")} <SARIcon className="w-4 h-4" />
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Plan Options */}
+        <div className="border-t border-[#D4D4D4] dark:border-[#333333] p-5">
+          <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-3">
+            {lang === "ar" ? "باقات الاشتراك" : "Subscription Plans"}
+          </p>
+          <div className="grid md:grid-cols-2 gap-3">
+            {platformPlans.map((plan) => (
+              <div
+                key={plan.id}
+                className={"relative border p-4 transition-all " + (plan.popular ? "border-[#0D0D0D] dark:border-[#F2F2F2]" : "border-[#D4D4D4] dark:border-[#333333]")}
+              >
+                {plan.badge && (
+                  <span className="absolute -top-2.5 start-1/2 -translate-x-1/2 px-3 py-0.5 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-[9px] font-bold whitespace-nowrap">
+                    {plan.badge[lang]}
+                  </span>
+                )}
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{plan.price.toLocaleString("en-US")}</span>
+                  <SARIcon className="w-4 h-4" />
+                  <span className="text-xs text-[#666666] dark:text-[#B3B3B3]">/{plan.period[lang]}</span>
+                </div>
+                <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2] mb-3">{plan.name[lang]}</p>
+                <button className="w-full h-9 text-xs font-bold border border-[#D4D4D4] dark:border-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2] hover:bg-[#F2F2F2] dark:hover:bg-[#1A1A1A] transition-colors">
+                  {plan.id === "monthly"
+                    ? (lang === "ar" ? "الاشتراك شهرياً" : "Subscribe Monthly")
+                    : (lang === "ar" ? "الاشتراك سنوياً" : "Subscribe Yearly")}
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -126,61 +175,70 @@ export default function PlanPage() {
           </div>
           <p className="text-xs text-[#666666] dark:text-[#B3B3B3]">
             {lang === "ar"
-              ? "اختر الرتبة المناسبة للانضمام إلى مجتمع Monest"
-              : "Choose the right tier to join the Monest community"}
+              ? "عضوية دائمة بدرجتين — اختر رتبتك الحالية وارقي لاحقاً"
+              : "Lifetime membership with 2 tiers — choose your rank and upgrade later"}
           </p>
         </div>
 
-        <div className="p-5 grid md:grid-cols-2 gap-4">
-          {communityTiers.map((tier) => (
-            <div
-              key={tier.id}
-              className={"relative border p-5 transition-all " + (
-                selectedTier === tier.id
-                  ? "border-[#0D0D0D] dark:border-[#F2F2F2]"
-                  : "border-[#D4D4D4] dark:border-[#333333] hover:border-[#999999] dark:hover:border-[#666666]"
-              )}
-            >
-              {tier.popular && (
-                <span className="absolute -top-2.5 start-1/2 -translate-x-1/2 px-3 py-0.5 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-[9px] font-bold">
-                  {lang === "ar" ? "الأكثر طلباً" : "Most Popular"}
-                </span>
-              )}
+        <div className="p-5">
+          <div className="inline-flex items-center gap-1 px-3 py-1 bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 text-[10px] font-bold mb-4">
+            <Clock size={12} />
+            {lang === "ar" ? "عضوية دائمة — تدفع مرة واحدة" : "Lifetime — pay once"}
+          </div>
 
-              <div className="flex items-center gap-2 mb-3">
-                <Star size={16} className={"shrink-0 " + (tier.id === "gold" ? "text-amber-500" : "text-[#999999]")} />
-                <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{tier.name[lang]}</p>
-              </div>
-
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-2xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{tier.price.toLocaleString("en-US")}</span>
-                <SARIcon className="w-4 h-4" />
-                <span className="text-xs text-[#666666] dark:text-[#B3B3B3]">/{tier.period[lang]}</span>
-              </div>
-
-              <ul className="space-y-2 mb-5">
-                {tier.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-[#666666] dark:text-[#B3B3B3]">
-                    <Check size={12} className="text-green-500 shrink-0 mt-0.5" />
-                    {f[lang]}
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => setSelectedTier(selectedTier === tier.id ? null : tier.id)}
-                className={"w-full h-10 text-xs font-bold transition-colors " + (
+          <div className="grid md:grid-cols-2 gap-4">
+            {communityTiers.map((tier) => (
+              <div
+                key={tier.id}
+                className={"relative border p-5 transition-all " + (
                   selectedTier === tier.id
-                    ? "bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D]"
-                    : "border border-[#D4D4D4] dark:border-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2] hover:bg-[#F2F2F2] dark:hover:bg-[#1A1A1A]"
+                    ? "border-[#0D0D0D] dark:border-[#F2F2F2]"
+                    : "border-[#D4D4D4] dark:border-[#333333] hover:border-[#999999] dark:hover:border-[#666666]"
                 )}
               >
-                {selectedTier === tier.id
-                  ? (lang === "ar" ? "محددة ✓" : "Selected ✓")
-                  : (lang === "ar" ? "اختيار الرتبة" : "Choose Tier")}
-              </button>
-            </div>
-          ))}
+                {tier.popular && (
+                  <span className="absolute -top-2.5 start-1/2 -translate-x-1/2 px-3 py-0.5 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-[9px] font-bold">
+                    {lang === "ar" ? "الأكثر طلباً" : "Most Popular"}
+                  </span>
+                )}
+
+                <div className="flex items-center gap-2 mb-3">
+                  <Star size={16} className={"shrink-0 " + (tier.id === "gold" ? "text-amber-500" : "text-[#999999]")} />
+                  <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{tier.name[lang]}</p>
+                </div>
+
+                <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-3">{tier.desc[lang]}</p>
+
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-2xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{tier.price.toLocaleString("en-US")}</span>
+                  <SARIcon className="w-4 h-4" />
+                  <span className="text-xs text-[#666666] dark:text-[#B3B3B3]">{lang === "ar" ? "مرة واحدة" : "one-time"}</span>
+                </div>
+
+                <ul className="space-y-2 mb-5">
+                  {tier.features.map((f, i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs text-[#666666] dark:text-[#B3B3B3]">
+                      <Check size={12} className="text-green-500 shrink-0 mt-0.5" />
+                      {f[lang]}
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={() => setSelectedTier(selectedTier === tier.id ? null : tier.id)}
+                  className={"w-full h-10 text-xs font-bold transition-colors " + (
+                    selectedTier === tier.id
+                      ? "bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D]"
+                      : "border border-[#D4D4D4] dark:border-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2] hover:bg-[#F2F2F2] dark:hover:bg-[#1A1A1A]"
+                  )}
+                >
+                  {selectedTier === tier.id
+                    ? (lang === "ar" ? "محددة ✓" : "Selected ✓")
+                    : (lang === "ar" ? "اختيار الرتبة" : "Choose Tier")}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

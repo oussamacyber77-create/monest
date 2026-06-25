@@ -2,9 +2,8 @@
 
 import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronLeft, ChevronRight, CalendarDays, Clock, Users, Video, MapPin, Plus, Play, List } from "lucide-react"
+import { ChevronLeft, ChevronRight, CalendarDays, Clock, Users, Video, Plus, ExternalLink } from "lucide-react"
 import { useSettingsStore } from "@/stores/settings-store"
-import { useRoomStore } from "@/stores/room-store"
 import { mockMeetings } from "@/lib/mock-data/meetings"
 import { GuidedTour } from "@/components/tour/guided-tour"
 import { HelpButton } from "@/components/tour/help-button"
@@ -17,12 +16,13 @@ const upcomingEvents = [
   { id: "e1", title: { ar: "ورشة: أساسيات التجارة الإلكترونية", en: "Workshop: E-commerce Basics" }, date: "2026-07-05", time: "20:00", host: "Monest Team", attendees: 34, type: "workshop" },
   { id: "e2", title: { ar: "لقاء مفتوح: أسئلة وأجوبة", en: "Open Meeting: Q&A Session" }, date: "2026-07-10", time: "21:00", host: "Monest Team", attendees: 18, type: "qa" },
   { id: "e3", title: { ar: "محاضرة: تحسين المبيعات بالذكاء الاصطناعي", en: "Lecture: Boost Sales with AI" }, date: "2026-07-15", time: "20:30", host: "AI Expert", attendees: 52, type: "lecture" },
+  { id: "e4", title: { ar: "اجتماع الفريق الشهري", en: "Monthly Team Meeting" }, date: "2026-07-22", time: "19:00", host: "Management", attendees: 12, type: "workshop" },
 ]
 
-const eventColors: Record<string, { bg: string; dot: string; label: string }> = {
-  workshop: { bg: "bg-violet-50 dark:bg-violet-900/20", dot: "bg-violet-500", label: "text-violet-600 dark:text-violet-400" },
-  qa: { bg: "bg-emerald-50 dark:bg-emerald-900/20", dot: "bg-emerald-500", label: "text-emerald-600 dark:text-emerald-400" },
-  lecture: { bg: "bg-amber-50 dark:bg-amber-900/20", dot: "bg-amber-500", label: "text-amber-600 dark:text-amber-400" },
+const eventColors: Record<string, { bg: string; dot: string; label: string; icon: string }> = {
+  workshop: { bg: "bg-violet-50 dark:bg-violet-900/20", dot: "bg-violet-500", label: "text-violet-600 dark:text-violet-400", icon: "bg-violet-100 dark:bg-violet-900/30" },
+  qa: { bg: "bg-emerald-50 dark:bg-emerald-900/20", dot: "bg-emerald-500", label: "text-emerald-600 dark:text-emerald-400", icon: "bg-emerald-100 dark:bg-emerald-900/30" },
+  lecture: { bg: "bg-amber-50 dark:bg-amber-900/20", dot: "bg-amber-500", label: "text-amber-600 dark:text-amber-400", icon: "bg-amber-100 dark:bg-amber-900/30" },
 }
 
 export default function MeetingsPage() {
@@ -54,7 +54,7 @@ export default function MeetingsPage() {
 
   const handleJoinMeeting = (roomCode: string) => router.push("/meetings/join/" + roomCode)
 
-  const recentMeetings = mockMeetings.filter((m) => m.status === "completed").slice(0, 4)
+  const recentMeetings = mockMeetings.filter((m) => m.status === "completed").slice(0, 6)
 
   return (
     <div className="flex-1 p-3 md:p-6 bg-[#F2F2F2] dark:bg-[#0D0D0D] overflow-y-auto">
@@ -71,138 +71,165 @@ export default function MeetingsPage() {
           </div>
           <button
             onClick={() => router.push("/meetings/admin/create")}
-            className="flex items-center gap-1.5 h-9 md:h-10 px-3 md:px-4 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-xs font-bold hover:opacity-90 transition-opacity"
+            className="h-9 md:h-10 px-4 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-xs font-bold hover:opacity-90 transition-opacity flex items-center gap-1.5"
           >
             <Plus size={16} />
             <span className="hidden sm:inline">{lang === "ar" ? "اجتماع جديد" : "New Meeting"}</span>
           </button>
         </div>
 
-        {/* Quick Actions */}
-        <div className="flex gap-2 md:gap-3 overflow-x-auto pb-1">
-          <button
-            onClick={() => router.push("/meetings/admin/create")}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-violet-500 to-purple-600 text-white text-xs font-bold hover:opacity-90 transition-opacity shrink-0"
-          >
-            <Video size={14} />
-            {lang === "ar" ? "إنشاء اجتماع" : "Create Meeting"}
-          </button>
-          <button
-            onClick={() => handleJoinMeeting("demo-001")}
-            className="flex items-center gap-2 px-4 py-2.5 border border-[#D4D4D4] dark:border-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2] text-xs font-bold hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A] transition-colors shrink-0"
-          >
-            <Play size={14} />
-            {lang === "ar" ? "انضمام سريع" : "Quick Join"}
-          </button>
-          <button
-            onClick={() => router.push("/meetings/admin/history")}
-            className="flex items-center gap-2 px-4 py-2.5 border border-[#D4D4D4] dark:border-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2] text-xs font-bold hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A] transition-colors shrink-0"
-          >
-            <List size={14} />
-            {lang === "ar" ? "السجل" : "History"}
-          </button>
-        </div>
-
-        {/* Upcoming Events */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-1.5 h-5 bg-violet-500" />
-            <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-              {lang === "ar" ? "الأحداث القادمة" : "Upcoming Events"}
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-3 md:gap-4">
-            {upcomingEvents.map((ev) => {
-              const colors = eventColors[ev.type] || eventColors.workshop
-              return (
-                <button
-                  key={ev.id}
-                  onClick={() => handleJoinMeeting("EVENT-" + ev.id.toUpperCase())}
-                  className={"text-start border border-[#D4D4D4] dark:border-[#333333] p-4 md:p-5 hover:shadow-md transition-all " + colors.bg}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className={"w-9 h-9 md:w-10 md:h-10 flex items-center justify-center " + colors.bg.replace("50", "100").replace("/20", "/10")}>
-                      <Video size={16} className={colors.label} />
-                    </div>
-                    <span className={"text-[9px] md:text-[10px] font-bold px-2 py-0.5 " + colors.bg.replace("/20", "/30") + " " + colors.label}>{ev.type}</span>
-                  </div>
-                  <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-2 line-clamp-2">{ev.title[lang]}</p>
-                  <div className="space-y-1 text-xs text-[#666666] dark:text-[#B3B3B3]">
-                    <p className="flex items-center gap-1.5"><CalendarDays size={12} className="shrink-0" /> {ev.date}</p>
-                    <p className="flex items-center gap-1.5"><Clock size={12} className="shrink-0" /> {ev.time}</p>
-                    <p className="flex items-center gap-1.5"><Users size={12} className="shrink-0" /> {ev.attendees} {lang === "ar" ? "مشارك" : "attendees"}</p>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Calendar */}
-        <div className="bg-white dark:bg-[#0D0D0D] border border-[#D4D4D4] dark:border-[#333333] p-4 md:p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-5 bg-emerald-500" />
-              <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-                {lang === "ar" ? "التقويم الشهري" : "Monthly Calendar"}
-              </h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => { if (calMonth > 0) setCalMonth((m) => m - 1); else { setCalMonth(11); setCalYear((y) => y - 1) } }}
-                className="w-7 h-7 flex items-center justify-center border border-[#D4D4D4] dark:border-[#333333] text-[#666666] hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors"
-              >
-                <ChevronRight size={14} />
-              </button>
-              <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] min-w-[120px] text-center">{monthNames[calMonth]} {calYear}</span>
-              <button
-                onClick={() => { if (calMonth < 11) setCalMonth((m) => m + 1); else { setCalMonth(0); setCalYear((y) => y + 1) } }}
-                className="w-7 h-7 flex items-center justify-center border border-[#D4D4D4] dark:border-[#333333] text-[#666666] hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors"
-              >
-                <ChevronLeft size={14} />
-              </button>
-            </div>
-          </div>
-          <div className="grid grid-cols-7 gap-px bg-[#D4D4D4] dark:bg-[#333333]">
-            {weekdays.map((d) => (
-              <div key={d} className="bg-[#E8E8E8] dark:bg-[#1A1A1A] py-2 text-center">
-                <span className="text-[10px] font-bold text-[#999999]">{lang === "ar" ? { Sun: "ح", Mon: "ن", Tue: "ث", Wed: "ر", Thu: "خ", Fri: "ج", Sat: "س" }[d] || d : d}</span>
+        {/* Main two-column layout: Events (left) + Calendar (right) */}
+        <div className="grid md:grid-cols-5 gap-4 md:gap-6">
+          {/* Left: Upcoming Events */}
+          <div className="md:col-span-2 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-5 bg-violet-500" />
+                <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                  {lang === "ar" ? "الأحداث القادمة" : "Upcoming Events"}
+                </h2>
               </div>
-            ))}
-            {Array.from({ length: firstDay }).map((_, i) => (
-              <div key={"e" + i} className="bg-white dark:bg-[#0D0D0D] min-h-[60px] md:min-h-[80px]" />
-            ))}
-            {Array.from({ length: daysInMonth }).map((_, i) => {
-              const day = i + 1
-              const isToday = calYear === today.getFullYear() && calMonth === today.getMonth() && day === today.getDate()
-              const dayEvents = monthEvents[day] || []
-              return (
-                <div key={day} className={"bg-white dark:bg-[#0D0D0D] p-1 md:p-1.5 min-h-[60px] md:min-h-[80px] " + (isToday ? "ring-2 ring-inset ring-[#0D0D0D] dark:ring-[#F2F2F2]" : "")}>
-                  <span className={"text-[11px] md:text-xs font-bold " + (isToday ? "text-[#0D0D0D] dark:text-[#F2F2F2]" : "text-[#666666] dark:text-[#999999]")}>{day}</span>
-                  <div className="mt-0.5 md:mt-1 space-y-0.5">
-                    {dayEvents.map((ev, ei) => {
-                      const col = eventColors[ev.type] || eventColors.workshop
-                      const hour = Number(ev.time.split(":")[0])
-                      const displayHour = hour === 20 ? "٨" : hour === 21 ? "٩" : "٧"
-                      return (
-                        <button
-                          key={ei}
-                          onClick={() => handleJoinMeeting("EVENT-D" + day)}
-                          className={"w-full text-[8px] md:text-[9px] text-start px-1 py-0.5 truncate " + col.dot.replace("bg-", "text-").replace("-500", "-600 dark:text-opacity-80") + " " + col.bg.replace("/20", "/10") + " hover:opacity-80 transition-opacity flex items-center gap-0.5"}
-                        >
-                          <span className={"inline-block w-1 h-1 rounded-full shrink-0 " + col.dot} />
-                          <span>{displayHour + ev.time.slice(2)}</span>
-                        </button>
-                      )
-                    })}
+              <span className="text-[10px] text-[#999999]">{upcomingEvents.length} {lang === "ar" ? "حدث" : "events"}</span>
+            </div>
+
+            <div className="space-y-3">
+              {upcomingEvents.map((ev, idx) => {
+                const colors = eventColors[ev.type] || eventColors.workshop
+                return (
+                  <button
+                    key={ev.id}
+                    onClick={() => handleJoinMeeting("EVENT-" + ev.id.toUpperCase())}
+                    className={"w-full text-start border border-[#D4D4D4] dark:border-[#333333] p-4 hover:shadow-md transition-all " + colors.bg}
+                  >
+                    {/* Date badge */}
+                    <div className="flex items-start gap-3">
+                      <div className="shrink-0 w-12 text-center">
+                        <div className="text-[18px] font-bold text-[#0D0D0D] dark:text-[#F2F2F2] leading-none">{ev.date.slice(8)}</div>
+                        <div className="text-[9px] text-[#999999] mt-0.5">
+                          {lang === "ar"
+                            ? { "07": "يوليو" }[ev.date.slice(5, 7)] || "يوليو"
+                            : monthNames[Number(ev.date.slice(5, 7)) - 1].slice(0, 3)}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className={"text-[9px] font-bold px-1.5 py-0.5 " + colors.bg.replace("/20", "/30") + " " + colors.label}>{ev.type}</span>
+                          <span className="text-[9px] text-[#999999]">{ev.host}</span>
+                        </div>
+                        <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] line-clamp-2 leading-snug">{ev.title[lang]}</p>
+                        <div className="flex items-center gap-3 mt-1.5 text-[11px] text-[#666666] dark:text-[#B3B3B3]">
+                          <span className="flex items-center gap-1"><Clock size={11} />{ev.time}</span>
+                          <span className="flex items-center gap-1"><Users size={11} />{ev.attendees}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Right: Calendar */}
+          <div className="md:col-span-3">
+            <div className="bg-white dark:bg-[#0D0D0D] border border-[#D4D4D4] dark:border-[#333333]">
+              {/* Calendar Header */}
+              <div className="p-4 md:p-5 border-b border-[#D4D4D4] dark:border-[#333333]">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <CalendarDays size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                    <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                      {lang === "ar" ? "التقويم الشهري" : "Monthly Calendar"}
+                    </h2>
                   </div>
+                  <a
+                    href="https://calendar.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-[#D4D4D4] dark:border-[#333333] text-[10px] font-medium text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors"
+                  >
+                    <ExternalLink size={12} />
+                    {lang === "ar" ? "Google Calendar" : "Google Calendar"}
+                  </a>
                 </div>
-              )
-            })}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => { if (calMonth > 0) setCalMonth((m) => m - 1); else { setCalMonth(11); setCalYear((y) => y - 1) } }}
+                    className="w-7 h-7 flex items-center justify-center border border-[#D4D4D4] dark:border-[#333333] text-[#666666] hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors"
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                  <span className="text-base font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{monthNames[calMonth]} {calYear}</span>
+                  <button
+                    onClick={() => { if (calMonth < 11) setCalMonth((m) => m + 1); else { setCalMonth(0); setCalYear((y) => y + 1) } }}
+                    className="w-7 h-7 flex items-center justify-center border border-[#D4D4D4] dark:border-[#333333] text-[#666666] hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors"
+                  >
+                    <ChevronLeft size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Calendar Grid */}
+              <div className="p-3 md:p-4">
+                <div className="grid grid-cols-7 gap-1">
+                  {weekdays.map((d) => (
+                    <div key={d} className="text-center py-1.5">
+                      <span className="text-[10px] font-bold text-[#999999]">
+                        {lang === "ar" ? { Sun: "ح", Mon: "ن", Tue: "ث", Wed: "ر", Thu: "خ", Fri: "ج", Sat: "س" }[d] || d : d}
+                      </span>
+                    </div>
+                  ))}
+                  {Array.from({ length: firstDay }).map((_, i) => <div key={"e" + i} />)}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const day = i + 1
+                    const isToday = calYear === today.getFullYear() && calMonth === today.getMonth() && day === today.getDate()
+                    const dayEvents = monthEvents[day] || []
+                    const hasEvents = dayEvents.length > 0
+                    return (
+                      <button
+                        key={day}
+                        onClick={() => hasEvents && handleJoinMeeting("EVENT-D" + day)}
+                        className={"relative flex flex-col items-center justify-start pt-1.5 pb-1 min-h-[44px] md:min-h-[56px] rounded-sm transition-colors " + (
+                          isToday
+                            ? "bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D]"
+                            : hasEvents
+                              ? "bg-violet-50 dark:bg-violet-900/20 text-[#0D0D0D] dark:text-[#F2F2F2] hover:bg-violet-100 dark:hover:bg-violet-900/30"
+                              : "hover:bg-[#F2F2F2] dark:hover:bg-[#1A1A1A] text-[#0D0D0D] dark:text-[#F2F2F2]"
+                        )}
+                      >
+                        <span className={"text-xs md:text-sm font-bold " + (isToday ? "text-[#F2F2F2] dark:text-[#0D0D0D]" : "")}>
+                          {day}
+                        </span>
+                        {hasEvents && (
+                          <div className="flex gap-0.5 mt-0.5">
+                            {dayEvents.map((ev, ei) => {
+                              const col = eventColors[ev.type] || eventColors.workshop
+                              return <span key={ei} className={"w-1 h-1 rounded-full " + col.dot} />
+                            })}
+                          </div>
+                        )}
+                        {!hasEvents && !isToday && (
+                          <span className="text-[8px] text-[#D4D4D4] dark:text-[#333333] mt-0.5">&bull;</span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Legend */}
+              <div className="px-4 pb-4 md:px-5 md:pb-5 flex items-center gap-4 text-[10px] text-[#666666] dark:text-[#B3B3B3] flex-wrap">
+                {Object.entries(eventColors).map(([key, val]) => (
+                  <span key={key} className="flex items-center gap-1">
+                    <span className={"w-2 h-2 rounded-full " + val.dot} />
+                    {key === "workshop" ? (lang === "ar" ? "ورشة" : "Workshop") : key === "qa" ? (lang === "ar" ? "أسئلة" : "Q&A") : (lang === "ar" ? "محاضرة" : "Lecture")}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Recent Meetings */}
+        {/* Recent Meetings - Horizontal Scroll Strip */}
         <div>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -215,36 +242,42 @@ export default function MeetingsPage() {
               {lang === "ar" ? "عرض الكل" : "View all"}
             </a>
           </div>
-          <div className="grid gap-px bg-[#D4D4D4] dark:border-[#333333]">
-            {recentMeetings.length === 0 ? (
-              <div className="bg-white dark:bg-[#0D0D0D] p-8 text-center text-sm text-[#999999]">
-                {lang === "ar" ? "لا توجد اجتماعات سابقة" : "No recent meetings"}
-              </div>
-            ) : (
-              recentMeetings.map((mtg) => (
-                <div key={mtg.id} className="bg-white dark:bg-[#0D0D0D] p-3 md:p-4 flex items-center gap-3 hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A] transition-colors">
-                  <div className="w-9 h-9 md:w-10 md:h-10 bg-violet-100 dark:bg-violet-900/20 flex items-center justify-center shrink-0">
+
+          {recentMeetings.length === 0 ? (
+            <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-8 text-center text-sm text-[#999999]">
+              {lang === "ar" ? "لا توجد اجتماعات سابقة" : "No recent meetings"}
+            </div>
+          ) : (
+            <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-none">
+              {recentMeetings.map((mtg) => (
+                <div
+                  key={mtg.id}
+                  className="flex-none w-[200px] md:w-[220px] bg-white dark:bg-[#0D0D0D] border border-[#D4D4D4] dark:border-[#333333] p-4 snap-start hover:shadow-md transition-all"
+                >
+                  <div className="w-9 h-9 bg-violet-100 dark:bg-violet-900/20 flex items-center justify-center mb-3">
                     <Video size={16} className="text-violet-600 dark:text-violet-400" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2] truncate">{mtg.title[lang]}</p>
-                    <div className="flex items-center gap-3 text-xs text-[#666666] dark:text-[#B3B3B3] mt-0.5 flex-wrap">
-                      <span className="flex items-center gap-1"><CalendarDays size={11} />{mtg.date}</span>
-                      <span className="flex items-center gap-1"><Clock size={11} />{mtg.duration} min</span>
-                    </div>
+                  <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2] truncate mb-2">{mtg.title[lang]}</p>
+                  <div className="flex items-center gap-2 text-[11px] text-[#666666] dark:text-[#B3B3B3] mb-3 flex-wrap">
+                    <span className="flex items-center gap-1"><CalendarDays size={11} />{mtg.date}</span>
+                    <span className="flex items-center gap-1"><Clock size={11} />{mtg.duration}m</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-[#999999] mb-3">
+                    <Users size={11} />{mtg.attendees} {lang === "ar" ? "مشارك" : "attendees"}
                   </div>
                   <button
                     onClick={() => handleJoinMeeting(mtg.id)}
-                    className="text-xs font-bold text-white px-3 py-1.5 bg-[#0D0D0D] dark:bg-[#F2F2F2] dark:text-[#0D0D0D] hover:opacity-90 transition-opacity shrink-0"
+                    className="w-full h-8 text-xs font-bold bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] hover:opacity-90 transition-opacity"
                   >
                     {lang === "ar" ? "انضمام" : "Join"}
                   </button>
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
       <HelpButton onClick={() => setShowTour(true)} />
       {showTour && (
         <GuidedTour
