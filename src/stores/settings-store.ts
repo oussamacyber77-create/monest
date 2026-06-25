@@ -15,6 +15,8 @@ interface SettingsState {
   toggleTheme: () => void
 }
 
+const storage = typeof window !== "undefined" ? window.sessionStorage : undefined
+
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
@@ -29,9 +31,8 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: "monest-settings",
-      storage: createJSONStorage(() =>
-        typeof window !== "undefined" ? window.sessionStorage : undefined!
-      ),
+      storage: createJSONStorage(() => storage!),
+      skipHydration: true,
     }
   )
 )

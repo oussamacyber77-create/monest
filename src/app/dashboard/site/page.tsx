@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useSettingsStore } from "@/stores/settings-store"
 import {
   Users, ShoppingCart, FolderTree, GitBranch, Package, Webhook,
@@ -36,6 +37,7 @@ const sections: Section[] = [
 ]
 
 export default function SiteManagementPage() {
+  const router = useRouter()
   const { direction } = useSettingsStore()
   const lang = direction === "rtl" ? "ar" : "en"
   const [search, setSearch] = useState("")
@@ -70,7 +72,8 @@ export default function SiteManagementPage() {
         {filtered.map((s) => (
           <button
             key={s.key}
-            className="group p-5 border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] hover:border-[#0D0D0D] dark:hover:border-[#F2F2F2] transition-all text-start relative overflow-hidden"
+            onClick={() => router.push("/dashboard/site/" + s.key)}
+            className="group p-5 border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] hover:border-[#0D0D0D] dark:hover:border-[#F2F2F2] transition-all text-start relative overflow-hidden cursor-pointer"
           >
             <div className={"w-11 h-11 rounded-lg flex items-center justify-center mb-3 " + s.bgColor}>
               <s.icon size={20} className={s.color} />

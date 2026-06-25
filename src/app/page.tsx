@@ -24,16 +24,6 @@ const features = [
     href: "/meetings",
   },
   {
-    key: "crm",
-    icon: <Users size={24} />,
-    title: { ar: "CRM متقدم", en: "Advanced CRM" },
-    desc: {
-      ar: "تتبع العملاء وإدارة التسجيلات الناقصة. نظام متكامل لمتابعة العملاء المحتملين وإغلاق الصفقات.",
-      en: "Track incomplete signups and manage customer relationships with a complete sales pipeline.",
-    },
-    href: "/crm",
-  },
-  {
     key: "commerce",
     icon: <BarChart3 size={24} />,
     title: { ar: "AI Commerce Intelligence", en: "AI Commerce Intelligence" },
@@ -79,20 +69,12 @@ export default function Home() {
                 ? "منصة متكاملة تجمع الاجتماعات الفورية، نظام CRM متقدم، وتحليلات ذكاء اصطناعي لمتاجر Salla — كل ذلك في مكان واحد."
                 : "A complete platform combining instant meetings, advanced CRM, and AI-powered analytics for Salla stores — all in one place."}
             </p>
-            <div className="flex items-center justify-center gap-3">
-              <button
-                onClick={() => router.push("/onboarding")}
-                className="h-12 px-8 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-sm font-bold hover:opacity-90 transition-opacity"
-              >
-                {lang === "ar" ? "ابدأ الآن" : "Get Started"}
-              </button>
-              <button
-                onClick={() => router.push("/meetings")}
-                className="h-12 px-8 border border-[#D4D4D4] dark:border-[#333333] text-sm font-medium text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors"
-              >
-                {lang === "ar" ? "جرب الاجتماعات" : "Try Meetings"}
-              </button>
-            </div>
+            <button
+              onClick={() => router.push("/onboarding")}
+              className="h-12 px-10 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-sm font-bold hover:opacity-90 transition-opacity"
+            >
+              {lang === "ar" ? "ابدأ الآن" : "Get Started"}
+            </button>
           </motion.div>
         </section>
 
@@ -135,10 +117,10 @@ export default function Home() {
                 {lang === "ar" ? "كل ما تحتاجه في منصة واحدة" : "Everything You Need in One Platform"}
               </h2>
               <p className="text-sm text-[#666666] dark:text-[#999999]">
-                {lang === "ar" ? "ثلاث أدوات متكاملة لإدارة وتنمية متجرك" : "Three integrated tools to manage and grow your store"}
+                {lang === "ar" ? "أداتين متكاملتين لإدارة وتنمية متجرك" : "Two integrated tools to manage and grow your store"}
               </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-px bg-[#D4D4D4] dark:bg-[#333333]">
+            <div className="grid md:grid-cols-2 gap-px bg-[#D4D4D4] dark:bg-[#333333] max-w-2xl mx-auto">
               {features.map((f) => (
                 <Link
                   key={f.key}

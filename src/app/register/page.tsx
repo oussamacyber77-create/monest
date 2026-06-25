@@ -393,10 +393,20 @@ function RegisterContent() {
             </div>
 
             <div className="flex gap-2">
-              <button className="flex-1 h-12 border border-[#D4D4D4] dark:border-[#333333] text-xs font-medium text-[#666666] dark:text-[#999999] hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A] transition-colors">
+              <button
+                onClick={() => setPaymentMethod("Tabby")}
+                className={"flex-1 h-12 border text-xs font-medium transition-colors " + (paymentMethod === "Tabby"
+                  ? "border-[#0D0D0D] dark:border-[#F2F2F2] bg-[#E8E8E8] dark:bg-[#1A1A1A] text-[#0D0D0D] dark:text-[#F2F2F2]"
+                  : "border-[#D4D4D4] dark:border-[#333333] text-[#666666] dark:text-[#999999] hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A]")}
+              >
                 {lang === "ar" ? "قسّط عبر Tabby" : "Pay via Tabby"}
               </button>
-              <button className="flex-1 h-12 border border-[#D4D4D4] dark:border-[#333333] text-xs font-medium text-[#666666] dark:text-[#999999] hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A] transition-colors">
+              <button
+                onClick={() => setPaymentMethod("Tamara")}
+                className={"flex-1 h-12 border text-xs font-medium transition-colors " + (paymentMethod === "Tamara"
+                  ? "border-[#0D0D0D] dark:border-[#F2F2F2] bg-[#E8E8E8] dark:bg-[#1A1A1A] text-[#0D0D0D] dark:text-[#F2F2F2]"
+                  : "border-[#D4D4D4] dark:border-[#333333] text-[#666666] dark:text-[#999999] hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A]")}
+              >
                 {lang === "ar" ? "قسّط عبر Tamara" : "Pay via Tamara"}
               </button>
             </div>

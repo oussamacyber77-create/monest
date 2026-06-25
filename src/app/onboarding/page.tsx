@@ -6,7 +6,7 @@ import { useSettingsStore } from "@/stores/settings-store"
 import { MonestLogo } from "@/components/ui/monest-logo"
 import { Check, ChevronRight, ChevronLeft, Clock, CalendarDays, Video } from "lucide-react"
 
-const STEPS = 10
+const STEPS = 14
 
 const experienceOptions = [
   { value: "A", label: { ar: "ما بديت متجر تجارة إلكترونية من قبل", en: "Never started an e-commerce store" } },
@@ -80,12 +80,14 @@ export default function OnboardingPage() {
 
   const canNext = () => {
     switch (step) {
-      case 2: return form.name.trim().length > 0
-      case 3: return form.phone.trim().length > 0
-      case 4: return form.email.trim().length > 0
-      case 5: return form.income !== ""
-      case 6: return form.age !== ""
-      case 7: return form.experience !== ""
+      case 1: return form.name.trim().length > 0
+      case 2: return form.phone.trim().length > 0
+      case 3: return form.email.trim().length > 0
+      case 4: return form.income !== ""
+      case 5: return form.age !== ""
+      case 6: return form.experience !== ""
+      case 7: return form.problem.trim().length > 0
+      case 8: return form.goal.trim().length > 0
       default: return true
     }
   }

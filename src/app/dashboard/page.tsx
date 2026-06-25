@@ -9,15 +9,18 @@ import { GuidedTour } from "@/components/tour/guided-tour"
 import { HelpButton } from "@/components/tour/help-button"
 import { dashboardTourSteps } from "@/components/tour/tour-steps"
 
-const salesDays = generateSalesDays()
-
 export default function DashboardPage() {
   const { direction } = useSettingsStore()
   const lang = direction === "rtl" ? "ar" : "en"
   const [showTour, setShowTour] = useState(false)
+  const [salesDays, setSalesDays] = useState<{ day: string; sales: number; orders: number }[]>([])
 
   useEffect(() => {
     if (!sessionStorage.getItem("tour-dashboard")) setShowTour(true)
+  }, [])
+
+  useEffect(() => {
+    setSalesDays(generateSalesDays())
   }, [])
 
   const topProducts = products.sort((a, b) => b.sales - a.sales).slice(0, 5)
