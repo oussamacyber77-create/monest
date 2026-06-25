@@ -37,11 +37,12 @@ VALUES
   ('هند الزهراني', '+966502345678', 'online'),
   ('محمد العبدالله', '+966552345678', 'offline');
 
--- 5. Default permissions
-INSERT INTO user_permissions (permission, enabled)
-SELECT k, true FROM (VALUES
-  ('customers'), ('orders'), ('carts'), ('branches'), ('products'),
-  ('webhooks'), ('payments'), ('taxes'), ('shipping'), ('marketing'),
-  ('reports'), ('analytics'), ('coupons'), ('reviews')
-) AS p(k)
-WHERE NOT EXISTS (SELECT 1 FROM user_permissions);
+-- IMPORTANT: user_permissions requires a valid user_id.
+-- After creating users in Supabase Auth, run:
+-- INSERT INTO user_permissions (user_id, permission, enabled)
+-- SELECT id, k, true FROM auth.users CROSS JOIN (VALUES
+--   ('customers'), ('orders'), ('carts'), ('branches'), ('products'),
+--   ('webhooks'), ('payments'), ('taxes'), ('shipping'), ('marketing'),
+--   ('reports'), ('analytics'), ('coupons'), ('reviews')
+-- ) AS p(k)
+-- WHERE NOT EXISTS (SELECT 1 FROM user_permissions WHERE user_id = auth.users.id AND permission = p.k);
