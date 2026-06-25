@@ -88,6 +88,18 @@ export default function PricingPage() {
   }
 
   return (
+<<<<<<< HEAD
+    <div className="flex-1 p-4 md:p-8 bg-[#F2F2F2] dark:bg-[#0D0D0D] overflow-y-auto">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-2">
+            {lang === "ar" ? "اختر باقتك" : "Choose Your Plan"}
+          </h1>
+          <p className="text-sm text-[#666666] dark:text-[#999999]">
+            {lang === "ar" ? "اختر باقتك وانضم لمجتمع Monest" : "Choose your plan and join Monest community"}
+          </p>
+        </div>
+=======
     <div className="flex-1 bg-[#F2F2F2] dark:bg-[#0D0D0D] overflow-y-auto">
       <div className="p-4 md:p-8">
         <div className="max-w-5xl mx-auto space-y-8">
@@ -99,6 +111,7 @@ export default function PricingPage() {
               {lang === "ar" ? "أطلق العنان لذكاء Monest الاصطناعي لمتجرك" : "Unlock Monest AI Intelligence for your store"}
             </p>
           </div>
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
 
           {/* Tabs */}
           <div className="flex gap-1 bg-[#E8E8E8] dark:bg-[#1A1A1A] p-1 max-w-md mx-auto">
@@ -115,6 +128,29 @@ export default function PricingPage() {
             ))}
           </div>
 
+<<<<<<< HEAD
+        {/* Plans grid */}
+        <div className={"grid gap-px bg-[#D4D4D4] dark:bg-[#333333] " + (tab === "subscription" ? "md:grid-cols-4" : "md:grid-cols-2 max-w-2xl mx-auto")}>
+          {plans.map((p) => (
+            <button
+              key={p.key}
+              onClick={() => setSelected(p.key)}
+              className={"p-6 text-start bg-[#F2F2F2] dark:bg-[#0D0D0D] transition-colors relative " + (selected === p.key ? "ring-2 ring-inset ring-[#0D0D0D] dark:ring-[#F2F2F2]" : "hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A]")}
+            >
+              {p.badge && (
+                <span className="absolute top-3 end-3 text-[10px] font-bold px-2 py-0.5 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D]">
+                  {p.badge[lang]}
+                </span>
+              )}
+              <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-1">{p.key}</p>
+              <div className="mb-4">
+                {p.originalPrice && (
+                  <span className="text-sm text-[#999999] line-through me-2">{p.originalPrice.toLocaleString()} $</span>
+                )}
+                <span className="text-3xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                  {p.price.toLocaleString()} <span className="text-sm font-normal text-[#666666] dark:text-[#999999]">$</span>
+                </span>
+=======
           {/* Plans grid */}
           <div className={"grid gap-px bg-[#D4D4D4] dark:bg-[#333333] " + (tab === "subscription" ? "md:grid-cols-4" : "md:grid-cols-2 max-w-2xl mx-auto")}>
             {plans.map((p) => (
@@ -155,6 +191,7 @@ export default function PricingPage() {
               <div className="flex justify-between text-sm">
                 <span className="text-[#666666] dark:text-[#999999]">{lang === "ar" ? "الباقة" : "Plan"}</span>
                 <span className="font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{selected}</span>
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-[#666666] dark:text-[#999999]">{lang === "ar" ? "المبلغ" : "Total"}</span>
@@ -174,7 +211,25 @@ export default function PricingPage() {
                     {m.svg}
                   </Link>
                 ))}
+<<<<<<< HEAD
+              </ul>
+            </button>
+          ))}
+        </div>
+
+        {/* Summary + Payment */}
+        <div className="max-w-md mx-auto space-y-5">
+          <div className="p-5 border border-[#D4D4D4] dark:border-[#333333] space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-[#666666] dark:text-[#999999]">{lang === "ar" ? "الباقة" : "Plan"}</span>
+              <span className="font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{selected}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[#666666] dark:text-[#999999]">{lang === "ar" ? "المبلغ" : "Total"}</span>
+              <span className="font-bold text-lg text-[#0D0D0D] dark:text-[#F2F2F2]">{currentPlan.price.toLocaleString()} $</span>
+=======
               </div>
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
             </div>
           </div>
         </div>

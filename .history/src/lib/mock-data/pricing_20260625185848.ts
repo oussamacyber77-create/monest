@@ -66,9 +66,15 @@ export const pricingPlans: Record<PricingPlanType, PricingPlan[]> = {
   ],
   lifetime: [
     {
+<<<<<<< HEAD
       key: "دوام أساسي",
       price: 1299,
       originalPrice: 2599,
+=======
+      key: "الباقة الأساسية الدائمة",
+      price: 4999,
+      originalPrice: 9999,
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
       period: "lifetime",
       type: "lifetime",
       desc: { ar: "عضوية مدى الحياة — الباقة الأساسية", en: "Lifetime membership — basic plan" },
@@ -78,9 +84,15 @@ export const pricingPlans: Record<PricingPlanType, PricingPlan[]> = {
       },
     },
     {
+<<<<<<< HEAD
       key: "دوام كامل",
       price: 2499,
       originalPrice: 4999,
+=======
+      key: "الباقة الكاملة الدائمة",
+      price: 9999,
+      originalPrice: 19999,
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
       period: "lifetime",
       type: "lifetime",
       badge: { ar: "الأكثر طلباً", en: "Most Popular" },

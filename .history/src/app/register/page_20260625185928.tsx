@@ -11,6 +11,7 @@ import { useRegistrationTrackingStore } from "@/stores/registration-tracking-sto
 import { useAuthStore } from "@/stores/auth-store"
 import { mockLeads, type LeadStage } from "@/lib/mock-data/crm"
 import { pricingPlans, pricingPlanTypes, findPlan, type PricingPlanType } from "@/lib/mock-data/pricing"
+import { useAuthStore } from "@/stores/auth-store"
 
 const stageToStep: Record<LeadStage, number> = { name: 1, phone: 2, otp: 3, package: 4, schedule: 5, payment: 6 }
 const stepToStage: Record<number, LeadStage> = { 1: "name", 2: "phone", 3: "otp", 4: "package", 5: "schedule", 6: "payment" }
@@ -290,10 +291,17 @@ function RegisterContent() {
                     </span>
                     <div>
                       {pkg.originalPrice && (
+<<<<<<< HEAD
+                        <span className="text-sm text-[#999999] line-through me-2">{pkg.originalPrice.toLocaleString()} $</span>
+                      )}
+                      <span className="text-lg font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                        {pkg.price.toLocaleString()} $
+=======
                         <span className="text-sm text-[#999999] line-through me-2">{pkg.originalPrice.toLocaleString("en-US")} {lang === "ar" ? "ر.س" : "SAR"}</span>
                       )}
                       <span className="text-lg font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
                         {pkg.price.toLocaleString("en-US")} {lang === "ar" ? "ر.س" : "SAR"}
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
                       </span>
                     </div>
                   </div>
@@ -371,7 +379,11 @@ function RegisterContent() {
                   {lang === "ar" ? "المبلغ" : "Total"}
                 </span>
                 <span className="font-bold text-lg text-[#0D0D0D] dark:text-[#F2F2F2]">
+<<<<<<< HEAD
+                  {selectedPlan?.price.toLocaleString() || "—"} $
+=======
                   {selectedPlan?.price.toLocaleString("en-US") || "—"} {lang === "ar" ? "ر.س" : "SAR"}
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
                 </span>
               </div>
             </div>
