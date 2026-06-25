@@ -6,9 +6,9 @@ import { AiChatBubble } from "@/components/dashboard/ai-chat-bubble"
 
 export default function MeetingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isFullScreen = pathname.startsWith("/meetings/room/")
+  const isMinimal = pathname.startsWith("/meetings/room/") || pathname.startsWith("/meetings/join/") || pathname.startsWith("/meetings/waiting/")
 
-  if (isFullScreen) {
+  if (isMinimal) {
     return <>{children}</>
   }
 

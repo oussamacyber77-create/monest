@@ -21,6 +21,11 @@ export function Navbar() {
 
   useEffect(() => { setMounted(true); checkSession() }, [checkSession])
 
+  // Hide navbar on meeting join/waiting/room pages
+  if (pathname.startsWith("/meetings/join/") || pathname.startsWith("/meetings/waiting/") || pathname.startsWith("/meetings/room/")) {
+    return null
+  }
+
   const links = [
     { href: "/meetings", label: { ar: "الاجتماعات", en: "Meetings" } },
     { href: "/crm", label: { ar: "CRM", en: "CRM" } },
