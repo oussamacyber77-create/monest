@@ -62,7 +62,7 @@ export default function ExecutivePage() {
           <div key={i} className="bg-[#F2F2F2] dark:bg-[#0D0D0D] p-4">
             <p className="text-xs text-[#666666] dark:text-[#999999] mb-1">{s.label[lang]}</p>
             <p className="text-xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-              {s.value.toLocaleString()}{s.suffix || ""}
+              {s.value.toLocaleString("en-US")}{s.suffix || ""}
             </p>
           </div>
         ))}

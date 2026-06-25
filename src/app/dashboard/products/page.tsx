@@ -56,7 +56,7 @@ export default function ProductsPage() {
             {sortedByProfit.slice(0, 5).map((p, i) => (
               <div key={p.id} className="flex items-center justify-between text-sm">
                 <span className="truncate text-[#0D0D0D] dark:text-[#F2F2F2]">{i + 1}. {p.name[lang]}</span>
-                <span className="text-xs text-[#666666] dark:text-[#999999]">+{((p.price - p.cost) * p.sales).toLocaleString()}</span>
+                <span className="text-xs text-[#666666] dark:text-[#999999]">+{((p.price - p.cost) * p.sales).toLocaleString("en-US")}</span>
               </div>
             ))}
           </div>
@@ -67,7 +67,7 @@ export default function ProductsPage() {
             {sortedByViews.slice(0, 5).map((p, i) => (
               <div key={p.id} className="flex items-center justify-between text-sm">
                 <span className="truncate text-[#0D0D0D] dark:text-[#F2F2F2]">{i + 1}. {p.name[lang]}</span>
-                <span className="text-xs text-[#666666] dark:text-[#999999]">{p.views.toLocaleString()}</span>
+                <span className="text-xs text-[#666666] dark:text-[#999999]">{p.views.toLocaleString("en-US")}</span>
               </div>
             ))}
           </div>
@@ -94,7 +94,7 @@ export default function ProductsPage() {
                   <td className="py-3 px-3 font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{p.name[lang]}</td>
                   <td className="py-3 px-3 text-[#666666] dark:text-[#999999]">{p.price} ر.س</td>
                   <td className="py-3 px-3 text-[#666666] dark:text-[#999999]">{p.sales}</td>
-                  <td className="py-3 px-3 text-[#666666] dark:text-[#999999]">{p.views.toLocaleString()}</td>
+                  <td className="py-3 px-3 text-[#666666] dark:text-[#999999]">{p.views.toLocaleString("en-US")}</td>
                   <td className="py-3 px-3 text-[#666666] dark:text-[#999999]">{(p.price - p.cost) * p.sales} ر.س</td>
                   <td className="py-3 px-3">
                     <span className={"inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium " + suggestionColors[p.aiSuggestion.type]}>

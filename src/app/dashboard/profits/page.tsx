@@ -43,7 +43,7 @@ export default function ProfitsPage() {
         {items.slice(0, 4).map((item, i) => (
           <div key={i} className="bg-[#F2F2F2] dark:bg-[#0D0D0D] p-4">
             <p className="text-xs text-[#666666] dark:text-[#999999] mb-1">{item.label[lang]}</p>
-            <p className={"text-xl " + item.color}>{item.value.toLocaleString()} ر.س</p>
+            <p className={"text-xl " + item.color}>{item.value.toLocaleString("en-US")} ر.س</p>
           </div>
         ))}
       </div>
@@ -57,7 +57,7 @@ export default function ProfitsPage() {
             {items.map((item, i) => (
               <div key={i} className="flex items-center justify-between py-2 border-b border-[#D4D4D4] dark:border-[#333333] last:border-0">
                 <span className="text-sm text-[#666666] dark:text-[#999999]">{item.label[lang]}</span>
-                <span className={"text-sm " + item.color}>{item.value.toLocaleString()} ر.س</span>
+                <span className={"text-sm " + item.color}>{item.value.toLocaleString("en-US")} ر.س</span>
               </div>
             ))}
           </div>

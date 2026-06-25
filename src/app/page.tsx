@@ -2,7 +2,11 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+<<<<<<< HEAD
 import { Users, Video, Target, Brain, Handshake, ChevronLeft } from "lucide-react"
+=======
+import { Video, Users, BarChart3, ChevronLeft, Package, MessageCircle, RefreshCw } from "lucide-react"
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
 import { motion } from "framer-motion"
 import { useSettingsStore } from "@/stores/settings-store"
 import { MonestLogo } from "@/components/ui/monest-logo"
@@ -217,23 +221,33 @@ export default function Home() {
                   {pricingPlans.subscription.map((p) => (
                     <div key={p.key} className="flex items-center justify-between py-1">
                       <span className="text-sm text-[#0D0D0D] dark:text-[#F2F2F2]">{p.key}</span>
+<<<<<<< HEAD
                       <span className="text-sm font-bold text-[#666666] dark:text-[#999999]">{p.price.toLocaleString()} $</span>
+=======
+                      <span className="text-sm font-bold text-[#666666] dark:text-[#999999]">{p.price.toLocaleString("en-US")} {lang === "ar" ? "ر.س" : "SAR"}</span>
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
                     </div>
                   ))}
                 </div>
               </div>
               <div className="bg-[#F2F2F2] dark:bg-[#0D0D0D] p-6">
                 <h3 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-3">
-                  {lang === "ar" ? "الدوام (الأفضل)" : "Lifetime (Best)"}
+                  {lang === "ar" ? "الباقات الدائمة" : "Lifetime (Best)"}
                 </h3>
                 <div className="space-y-2">
                   {pricingPlans.lifetime.map((p) => (
                     <div key={p.key} className="flex items-center justify-between py-1">
                       <div>
                         <span className="text-sm text-[#0D0D0D] dark:text-[#F2F2F2]">{p.key}</span>
+<<<<<<< HEAD
                         {p.originalPrice && <span className="text-xs text-[#999999] line-through me-1">{p.originalPrice.toLocaleString()} $</span>}
                       </div>
                       <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{p.price.toLocaleString()} $</span>
+=======
+                        {p.originalPrice && <span className="text-xs text-[#999999] line-through me-1">{p.originalPrice.toLocaleString("en-US")} {lang === "ar" ? "ر.س" : "SAR"}</span>}
+                      </div>
+                      <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{p.price.toLocaleString("en-US")} {lang === "ar" ? "ر.س" : "SAR"}</span>
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
                     </div>
                   ))}
                 </div>
@@ -271,6 +285,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
+<<<<<<< HEAD
         <footer className="border-t border-[#D4D4D4] dark:border-[#333333] px-6 py-8">
           <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -280,6 +295,26 @@ export default function Home() {
             <div className="flex items-center gap-6 text-xs text-[#999999]">
               <Link href="/auth/pricing" className="hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors">
                 {lang === "ar" ? "الباقات" : "Pricing"}
+=======
+        <footer className="border-t border-[#D4D4D4] dark:border-[#333333] px-6 py-10 bg-[#E8E8E8] dark:bg-[#1A1A1A]">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+              <Link href="/community" className="flex items-center gap-3 text-sm text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors">
+                <Users size={18} className="text-blue-500" />
+                {lang === "ar" ? "عن المجتمع" : "About Community"}
+              </Link>
+              <Link href="/auth/pricing" className="flex items-center gap-3 text-sm text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors">
+                <Package size={18} className="text-emerald-500" />
+                {lang === "ar" ? "الباقات" : "Packages"}
+              </Link>
+              <Link href="/consulting" className="flex items-center gap-3 text-sm text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors">
+                <MessageCircle size={18} className="text-violet-500" />
+                {lang === "ar" ? "استشارات" : "Consulting"}
+              </Link>
+              <Link href="/returns" className="flex items-center gap-3 text-sm text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors">
+                <RefreshCw size={18} className="text-amber-500" />
+                {lang === "ar" ? "الاستبدال والاسترجاع" : "Returns & Exchanges"}
+>>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
               </Link>
               <Link href="/consulting" className="hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors">
                 {lang === "ar" ? "استشارات" : "Consulting"}
@@ -291,7 +326,27 @@ export default function Home() {
                 {lang === "ar" ? "تنويه" : "Notice"}
               </Link>
             </div>
-            <p className="text-xs text-[#999999]">© 2026 Monest</p>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-[#D4D4D4] dark:border-[#333333]">
+              <div className="flex items-center gap-2">
+                <MonestLogo width={20} height={20} className="text-[#0D0D0D] dark:text-[#F2F2F2] fill-current" />
+                <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">Monest</span>
+              </div>
+              <div className="flex items-center gap-6 text-xs text-[#999999]">
+                <Link href="/meetings" className="hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors">
+                  {lang === "ar" ? "الاجتماعات" : "Meetings"}
+                </Link>
+                <Link href="/crm" className="hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors">
+                  CRM
+                </Link>
+                <Link href="/monest" className="hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors">
+                  AI Commerce
+                </Link>
+                <Link href="/auth/pricing" className="hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors">
+                  {lang === "ar" ? "الباقات" : "Pricing"}
+                </Link>
+              </div>
+              <p className="text-xs text-[#999999]">© 2026 Monest</p>
+            </div>
           </div>
         </footer>
       </div>
