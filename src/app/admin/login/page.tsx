@@ -10,7 +10,7 @@ function AdminLoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { direction } = useSettingsStore()
-  const { isAdmin, checkSession, login } = useAuthStore()
+  const { role, checkSession, loginAsAdmin } = useAuthStore()
   const lang = direction === "rtl" ? "ar" : "en"
 
   const [email, setEmail] = useState("")
@@ -23,10 +23,10 @@ function AdminLoginForm() {
   }, [])
 
   useEffect(() => {
-    if (isAdmin) {
+    if (role === "admin") {
       router.replace("/dashboard")
     }
-  }, [isAdmin])
+  }, [role])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,7 +44,7 @@ function AdminLoginForm() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      login()
+      loginAsAdmin()
       const redirect = searchParams.get("redirect") || "/dashboard"
       router.replace(redirect)
     } catch (err) {

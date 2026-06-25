@@ -95,7 +95,9 @@ export default function Home() {
       مجتمع Monest
       <span className="block mt-6">
         دائرة رواد أعمال الحقيقية
-      </span>
+git remote add origin https://github.com/oussamacyber77-create/monest.git
+git branch -M main
+git push -u origin main      </span>
     </>
   ) : (
     <>

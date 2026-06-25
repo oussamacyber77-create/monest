@@ -41,7 +41,7 @@ export default function DashboardPage() {
             {lang === "ar" ? "لوحة المعلومات" : "Dashboard"}
           </h1>
           <p className="text-sm text-[#666666] dark:text-[#999999]">
-            {lang === "ar" ? "مرحباً بك في منصة Monest" : "Welcome to Monest Platform"}
+            {lang === "ar" ? "مرحباً بك في مساحة عضويتك" : "Welcome to Your Membership Space"}
           </p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 border border-[#D4D4D4] dark:border-[#333333]">

@@ -56,9 +56,10 @@ export default function MeetingsPage() {
   }
 
   const handleJoinByCode = async () => {
+    const trimmedCode = joinCode.trim()
+    if (trimmedCode.length !== 8) { setJoinError(lang === "ar" ? "رمز الاجتماع يجب أن يكون 8 أحرف" : "Meeting code must be 8 characters"); return }
     const digits = joinPhone.replace(/\D/g, "")
-    if (digits.length < 4) { setJoinError(lang === "ar" ? "أدخل 4 أرقام على الأقل" : "Enter at least 4 digits"); return }
-    if (!joinCode.trim()) { setJoinError(lang === "ar" ? "أدخل رمز الاجتماع" : "Enter meeting ID"); return }
+    if (digits.length < 4) { setJoinError(lang === "ar" ? "أدخل رقم الهاتف (4 أرقام على الأقل)" : "Enter your phone number (at least 4 digits)"); return }
     setJoinError("")
     setJoinLoading(true)
     try {
@@ -130,16 +131,29 @@ export default function MeetingsPage() {
             <p className="text-sm text-[#666666] dark:text-[#999999] mb-5">
               {lang === "ar" ? "أدخل رمز الاجتماع المكون من 8 أحرف" : "Enter the 8-character meeting code"}
             </p>
-            <Input
-              label={lang === "ar" ? "رمز الاجتماع" : "Meeting Code"}
-              placeholder={lang === "ar" ? "أدخل الرمز" : "Enter code"}
-              value={joinCode}
-              onChange={(e) => { setJoinCode(e.target.value); if (joinError) setJoinError("") }}
-            />
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <Input
+                  label={lang === "ar" ? "رقم الهاتف" : "Phone Number"}
+                  placeholder={lang === "ar" ? "05xxxxxxxx" : "+1 (555) 000-0000"}
+                  value={joinPhone}
+                  onChange={(e) => { setJoinPhone(e.target.value); if (joinError) setJoinError("") }}
+                  type="tel"
+                />
+              </div>
+              <div className="flex-1">
+                <Input
+                  label={lang === "ar" ? "رمز الاجتماع" : "Meeting Code"}
+                  placeholder={lang === "ar" ? "أدخل الرمز" : "Enter code"}
+                  value={joinCode}
+                  onChange={(e) => { setJoinCode(e.target.value); if (joinError) setJoinError("") }}
+                />
+              </div>
+            </div>
             {joinError && <p className="text-sm text-[#DC2626] mt-2">{joinError}</p>}
             <Button
               onClick={handleJoinByCode}
-              disabled={joinLoading || !joinCode || !joinPhone}
+              disabled={joinLoading || joinCode.trim().length !== 8}
               className="w-full mt-4"
               size="lg"
             >

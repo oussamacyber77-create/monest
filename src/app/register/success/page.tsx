@@ -36,11 +36,11 @@ export default function RegisterSuccessPage() {
         </p>
 
         <div className="flex gap-3 justify-center">
-          <Button onClick={() => router.push("/")} size="lg">
-            {lang === "ar" ? "العودة للرئيسية" : "Back to Home"}
+          <Button onClick={() => router.push("/member/home")} size="lg">
+            {lang === "ar" ? "دخول مساحة عضويتي" : "Go to My Space"}
           </Button>
-          <Button variant="secondary" onClick={() => router.push("/meetings")} size="lg">
-            {lang === "ar" ? "الذهاب للاجتماعات" : "Go to Meetings"}
+          <Button variant="secondary" onClick={() => router.push("/")} size="lg">
+            {lang === "ar" ? "العودة للرئيسية" : "Back to Home"}
           </Button>
         </div>
       </div>

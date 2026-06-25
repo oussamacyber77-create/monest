@@ -10,6 +10,7 @@ import { useSettingsStore } from "@/stores/settings-store"
 import { useRegistrationTrackingStore } from "@/stores/registration-tracking-store"
 import { mockLeads, type LeadStage } from "@/lib/mock-data/crm"
 import { pricingPlans, pricingPlanTypes, findPlan, type PricingPlanType } from "@/lib/mock-data/pricing"
+import { useAuthStore } from "@/stores/auth-store"
 
 const stageToStep: Record<LeadStage, number> = { name: 1, phone: 2, otp: 3, package: 4, schedule: 5, payment: 6 }
 const stepToStage: Record<number, LeadStage> = { 1: "name", 2: "phone", 3: "otp", 4: "package", 5: "schedule", 6: "payment" }
@@ -37,6 +38,7 @@ function RegisterContent() {
   const searchParams = useSearchParams()
   const { direction } = useSettingsStore()
   const { startSession, updateStep, completeSession, currentSessionId, sessions } = useRegistrationTrackingStore()
+  const { loginAsMember } = useAuthStore()
   const lang = direction === "rtl" ? "ar" : "en"
 
   const [step, setStep] = useState(1)
@@ -103,6 +105,7 @@ function RegisterContent() {
     if (!sessionId) return
     setPaymentSuccess(true)
     completeSession(sessionId)
+    loginAsMember()
     setTimeout(() => router.push("/register/success"), 1500)
   }
 
@@ -287,10 +290,10 @@ function RegisterContent() {
                     </span>
                     <div>
                       {pkg.originalPrice && (
-                        <span className="text-sm text-[#999999] line-through me-2">{pkg.originalPrice.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}</span>
+                        <span className="text-sm text-[#999999] line-through me-2">{pkg.originalPrice.toLocaleString()} $</span>
                       )}
                       <span className="text-lg font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-                        {pkg.price.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}
+                        {pkg.price.toLocaleString()} $
                       </span>
                     </div>
                   </div>
@@ -368,7 +371,7 @@ function RegisterContent() {
                   {lang === "ar" ? "المبلغ" : "Total"}
                 </span>
                 <span className="font-bold text-lg text-[#0D0D0D] dark:text-[#F2F2F2]">
-                  {selectedPlan?.price.toLocaleString() || "—"} {lang === "ar" ? "ر.س" : "SAR"}
+                  {selectedPlan?.price.toLocaleString() || "—"} $
                 </span>
               </div>
             </div>

@@ -26,12 +26,13 @@ export function GuidedTour({ steps, onComplete, onSkip }: GuidedTourProps) {
   const [viewportH, setViewportH] = useState(0)
   const [viewportW, setViewportW] = useState(0)
   const cardRef = useRef<HTMLDivElement>(null)
+  const rafRef = useRef<number | null>(null)
 
   const step = steps[currentStep]
 
   const measure = useCallback(() => {
     const el = document.getElementById(step.targetId)
-    if (!el) return
+    if (!el) return false
     const r = el.getBoundingClientRect()
     setRect(r)
     setViewportH(window.innerHeight)
@@ -56,7 +57,7 @@ export function GuidedTour({ steps, onComplete, onSkip }: GuidedTourProps) {
     }
 
     setCardPos({ top, left })
-    setVisible(false)
+    setVisible(true)
 
     requestAnimationFrame(() => {
       if (cardRef.current) {
@@ -76,17 +77,33 @@ export function GuidedTour({ steps, onComplete, onSkip }: GuidedTourProps) {
         }
 
         setCardPos({ top: ct, left: cl })
-        setVisible(true)
       }
     })
+    return true
   }, [step])
 
   useEffect(() => {
-    measure()
-    window.addEventListener("resize", measure)
-    window.addEventListener("scroll", measure)
-    document.body.style.overflow = "hidden"
+    let attempts = 0
+    const maxAttempts = 40
+
+    const tryMeasure = () => {
+      const found = measure()
+      if (found) {
+        window.addEventListener("resize", measure)
+        window.addEventListener("scroll", measure)
+        document.body.style.overflow = "hidden"
+      } else if (attempts < maxAttempts) {
+        attempts++
+        rafRef.current = requestAnimationFrame(tryMeasure)
+      } else {
+        onSkip?.()
+      }
+    }
+
+    tryMeasure()
+
     return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
       window.removeEventListener("resize", measure)
       window.removeEventListener("scroll", measure)
       document.body.style.overflow = ""

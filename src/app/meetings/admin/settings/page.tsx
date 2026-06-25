@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useSettingsStore } from "@/stores/settings-store"
+import { ToggleSwitch } from "@/components/ui/toggle-switch"
 
 const settingDefs = (lang: string) => [
   { key: "allowRecording", label: lang === "ar" ? "السماح بالتسجيل" : "Allow Recording", desc: lang === "ar" ? "تمكين المشاركين من تسجيل الاجتماع" : "Allow participants to record the meeting" },
@@ -52,12 +53,7 @@ export default function AdminSettingsPage() {
                 <span className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{label}</span>
                 <p className="text-xs text-[#999999] dark:text-[#666666] mt-0.5">{desc}</p>
               </div>
-              <button
-                onClick={() => toggle(key)}
-                className={"w-12 h-7 relative transition-colors shrink-0 " + (settings[key] ? "bg-[#0D0D0D] dark:bg-[#F2F2F2]" : "bg-[#D4D4D4] dark:bg-[#333333]")}
-              >
-                <span className={"absolute top-0.5 w-6 h-6 bg-white transition-all " + (settings[key] ? "end-0.5" : "start-0.5")} />
-              </button>
+              <ToggleSwitch checked={settings[key]} onChange={() => toggle(key)} />
             </label>
           ))}
         </div>

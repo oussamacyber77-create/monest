@@ -1,10 +1,14 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Users, Video, Target, Brain, Handshake, ChevronLeft } from "lucide-react"
 import { motion } from "framer-motion"
 import { useSettingsStore } from "@/stores/settings-store"
+import { GuidedTour } from "@/components/tour/guided-tour"
+import { HelpButton } from "@/components/tour/help-button"
+import { landingTourSteps } from "@/components/tour/tour-steps"
 import { MonestLogo } from "@/components/ui/monest-logo"
 import { pricingPlans } from "@/lib/mock-data/pricing"
 
@@ -65,6 +69,11 @@ export default function Home() {
   const { direction } = useSettingsStore()
   const router = useRouter()
   const lang = direction === "rtl" ? "ar" : "en"
+  const [showTour, setShowTour] = useState(false)
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("tour-landing")) setShowTour(true)
+  }, [])
 
   return (
     <>
@@ -89,18 +98,18 @@ export default function Home() {
             <div className="flex justify-center mb-6">
               <MonestLogo width={64} height={64} className="text-[#0D0D0D] dark:text-[#F2F2F2] fill-current" />
             </div>
-<h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0D0D0D] dark:text-[#F2F2F2] leading-[1.1] mb-4">
+           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0D0D0D] dark:text-[#F2F2F2] leading-[1.1] mb-4">
   {lang === "ar" ? (
     <>
       مجتمع Monest
-      <span className="block mt-6">
-        دائرة رواد أعمال الحقيقية
+      <span className="block text-3xl md:text-5xl mt-2">
+        دائرة رواد أعمال حقيقية
       </span>
     </>
   ) : (
     <>
       Monest Community
-      <span className="block mt-6">
+      <span className="block text-3xl md:text-5xl mt-2">
         A Real Entrepreneur Network
       </span>
     </>
@@ -217,7 +226,7 @@ export default function Home() {
                   {pricingPlans.subscription.map((p) => (
                     <div key={p.key} className="flex items-center justify-between py-1">
                       <span className="text-sm text-[#0D0D0D] dark:text-[#F2F2F2]">{p.key}</span>
-                      <span className="text-sm font-bold text-[#666666] dark:text-[#999999]">{p.price.toLocaleString()} $</span>
+                      <span className="text-sm font-bold text-[#666666] dark:text-[#999999]">{p.price.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}</span>
                     </div>
                   ))}
                 </div>
@@ -231,9 +240,9 @@ export default function Home() {
                     <div key={p.key} className="flex items-center justify-between py-1">
                       <div>
                         <span className="text-sm text-[#0D0D0D] dark:text-[#F2F2F2]">{p.key}</span>
-                        {p.originalPrice && <span className="text-xs text-[#999999] line-through me-1">{p.originalPrice.toLocaleString()} $</span>}
+                        {p.originalPrice && <span className="text-xs text-[#999999] line-through me-1">{p.originalPrice.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}</span>}
                       </div>
-                      <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{p.price.toLocaleString()} $</span>
+                      <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{p.price.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}</span>
                     </div>
                   ))}
                 </div>
@@ -295,6 +304,15 @@ export default function Home() {
           </div>
         </footer>
       </div>
+
+      <HelpButton onClick={() => setShowTour(true)} />
+      {showTour && (
+        <GuidedTour
+          steps={landingTourSteps}
+          onComplete={() => { sessionStorage.setItem("tour-landing", "1"); setShowTour(false) }}
+          onSkip={() => { sessionStorage.setItem("tour-landing", "1"); setShowTour(false) }}
+        />
+      )}
     </>
   )
 }

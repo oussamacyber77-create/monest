@@ -24,7 +24,7 @@ export default function PricingPage() {
 
   const handlePay = () => {
     setSuccess(true)
-    setTimeout(() => router.push("/dashboard"), 1200)
+    setTimeout(() => router.push("/member/home"), 1200)
   }
 
   if (success) {
@@ -53,7 +53,7 @@ export default function PricingPage() {
             {lang === "ar" ? "اختر باقتك" : "Choose Your Plan"}
           </h1>
           <p className="text-sm text-[#666666] dark:text-[#999999]">
-            {lang === "ar" ? "أطلق العنان لذكاء Monest الاصطناعي لمتجرك" : "Unlock Monest AI Intelligence for your store"}
+            {lang === "ar" ? "اختر باقتك وانضم لمجتمع Monest" : "Choose your plan and join Monest community"}
           </p>
         </div>
 
@@ -88,10 +88,10 @@ export default function PricingPage() {
               <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-1">{p.key}</p>
               <div className="mb-4">
                 {p.originalPrice && (
-                  <span className="text-sm text-[#999999] line-through me-2">{p.originalPrice.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}</span>
+                  <span className="text-sm text-[#999999] line-through me-2">{p.originalPrice.toLocaleString()} $</span>
                 )}
                 <span className="text-3xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-                  {p.price.toLocaleString()} <span className="text-sm font-normal text-[#666666] dark:text-[#999999]">{lang === "ar" ? "ر.س" : "SAR"}</span>
+                  {p.price.toLocaleString()} <span className="text-sm font-normal text-[#666666] dark:text-[#999999]">$</span>
                 </span>
               </div>
               <ul className="space-y-2">
@@ -115,7 +115,7 @@ export default function PricingPage() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-[#666666] dark:text-[#999999]">{lang === "ar" ? "المبلغ" : "Total"}</span>
-              <span className="font-bold text-lg text-[#0D0D0D] dark:text-[#F2F2F2]">{currentPlan.price.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}</span>
+              <span className="font-bold text-lg text-[#0D0D0D] dark:text-[#F2F2F2]">{currentPlan.price.toLocaleString()} $</span>
             </div>
           </div>
 

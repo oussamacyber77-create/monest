@@ -11,20 +11,20 @@ export const landingTourSteps: TourStep[] = [
     position: "bottom",
   },
   {
-    targetId: "tour-feature-crm",
-    title: { ar: "CRM", en: "CRM" },
+    targetId: "tour-feature-community",
+    title: { ar: "مجتمع تجار حقيقي", en: "Real Merchant Community" },
     content: {
-      ar: "تتبع العملاء المحتملين والتسجيل الناقص. يمكنك إكمال التسجيل من نفس المرحلة التي توقف فيها العميل.",
-      en: "Track leads and incomplete registrations. You can resume registration from the exact stage where the customer left off.",
+      ar: "انضم إلى مجتمع حصري من رواد الأعمال والتجار في السعودية. تبادل الخبرات، احصل على دعم حقيقي، وابنِ علاقات تجارية قيّمة.",
+      en: "Join an exclusive community of entrepreneurs and merchants in Saudi Arabia. Exchange expertise, get real support, and build valuable business relationships.",
     },
     position: "bottom",
   },
   {
-    targetId: "tour-feature-commerce",
-    title: { ar: "AI Commerce Intelligence", en: "AI Commerce Intelligence" },
+    targetId: "tour-feature-ai-monitoring",
+    title: { ar: "متابعة المتجر بالذكاء الاصطناعي", en: "AI Store Monitoring" },
     content: {
-      ar: "منصة الذكاء الاصطناعي لمتجرك — تحليلات متقدمة، توصيات ذكية، وأتمتة كاملة لإدارة المبيعات والمخزون والتسويق.",
-      en: "AI-powered platform for your store — advanced analytics, smart recommendations, and full automation for sales, inventory, and marketing.",
+      ar: "اربط متجرك بـ Salla وتابع أداءه بالذكاء الاصطناعي — تحليلات متقدمة، توصيات ذكية، وتقارير أداء — كل ذلك ضمن عضويتك في Monest.",
+      en: "Connect your Salla store and get AI-powered performance monitoring — advanced analytics, smart recommendations, and performance reports — all within your Monest membership.",
     },
     position: "bottom",
   },

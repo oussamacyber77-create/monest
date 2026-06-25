@@ -1,29 +1,40 @@
 import { create } from "zustand"
 
+export type UserRole = "guest" | "member" | "admin"
+
 interface AuthState {
-  isAdmin: boolean
+  role: UserRole
   isLoading: boolean
-  login: () => void
+  loginAsAdmin: () => void
+  loginAsMember: () => void
   logout: () => void
   checkSession: () => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isAdmin: false,
+  role: "guest",
   isLoading: true,
 
-  login: () => {
+  loginAsAdmin: () => {
     sessionStorage.setItem("monest-admin", "1")
-    set({ isAdmin: true, isLoading: false })
+    set({ role: "admin", isLoading: false })
+  },
+
+  loginAsMember: () => {
+    sessionStorage.setItem("monest-member", "1")
+    set({ role: "member", isLoading: false })
   },
 
   logout: () => {
     sessionStorage.removeItem("monest-admin")
-    set({ isAdmin: false, isLoading: false })
+    sessionStorage.removeItem("monest-member")
+    set({ role: "guest", isLoading: false })
   },
 
   checkSession: () => {
-    const session = sessionStorage.getItem("monest-admin")
-    set({ isAdmin: session === "1", isLoading: false })
+    const isAdmin = sessionStorage.getItem("monest-admin") === "1"
+    const isMember = sessionStorage.getItem("monest-member") === "1"
+    const role: UserRole = isAdmin ? "admin" : isMember ? "member" : "guest"
+    set({ role, isLoading: false })
   },
 }))

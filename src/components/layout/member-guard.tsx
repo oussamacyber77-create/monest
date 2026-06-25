@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useAuthStore } from "@/stores/auth-store"
 
-export function AdminGuard({ children }: { children: React.ReactNode }) {
+export function MemberGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const { role, isLoading, checkSession } = useAuthStore()
@@ -18,8 +18,8 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (!isLoading && role !== "admin") {
-      router.replace("/admin/login?redirect=" + encodeURIComponent(pathname))
+    if (!isLoading && role === "guest") {
+      router.replace("/auth/login?redirect=" + encodeURIComponent(pathname))
     }
   }, [isLoading, role, pathname, router])
 
@@ -31,7 +31,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (role !== "admin") return null
+  if (role === "guest") return null
 
   return <>{children}</>
 }

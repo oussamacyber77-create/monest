@@ -1,11 +1,11 @@
 "use client"
 
+import { useState, useCallback } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { LayoutDashboard, Brain, Users, Package, Megaphone, Archive, TrendingUp, MessageCircle, Settings, LogOut, Store } from "lucide-react"
+import { LayoutDashboard, Brain, Users, Package, Megaphone, Archive, TrendingUp, MessageCircle, Settings, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { useSettingsStore } from "@/stores/settings-store"
 import { useAuthStore } from "@/stores/auth-store"
 import { cn } from "@/lib/utils"
-import { MonestLogo } from "@/components/ui/monest-logo"
 
 const items = (lang: string) => [
   { href: "/dashboard", label: lang === "ar" ? "لوحة المعلومات" : "Dashboard", icon: LayoutDashboard },
@@ -24,52 +24,106 @@ export function DashboardSidebar() {
   const { direction, theme } = useSettingsStore()
   const { logout } = useAuthStore()
   const lang = direction === "rtl" ? "ar" : "en"
+  const [collapsed, setCollapsed] = useState(() => sessionStorage.getItem("sidebar-collapsed") === "true")
+
+  const toggle = useCallback(() => {
+    setCollapsed((c) => {
+      const next = !c
+      sessionStorage.setItem("sidebar-collapsed", String(next))
+      return next
+    })
+  }, [])
+
+  const buttonClass = (isActive: boolean) =>
+    cn(
+      "w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
+      isActive
+        ? "bg-[#0D0D0D] text-[#F2F2F2] dark:bg-[#F2F2F2] dark:text-[#0D0D0D]"
+        : "text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#1A1A1A]"
+    )
+
+  const isActive = (href: string) =>
+    href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href)
 
   return (
-    <aside className="w-56 border-e border-[#D4D4D4] dark:border-[#333333] bg-[#F2F2F2] dark:bg-[#0D0D0D] flex flex-col shrink-0 overflow-y-auto">
-      <div className="p-4 border-b border-[#D4D4D4] dark:border-[#333333]">
-        <button onClick={() => router.push("/")} className="flex items-center gap-2">
-          <MonestLogo width={24} height={24} className="fill-current text-[#0D0D0D] dark:text-[#F2F2F2]" />
-          <span className="text-base font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">Monest</span>
+    <aside
+      className={cn(
+        "sticky top-0 h-screen border-e border-[#D4D4D4] dark:border-[#333333] bg-[#F2F2F2] dark:bg-[#0D0D0D] flex flex-col shrink-0 overflow-y-auto transition-all duration-200",
+        collapsed ? "w-16" : "w-56"
+      )}
+    >
+      <div className={cn("flex items-center border-b border-[#D4D4D4] dark:border-[#333333]", collapsed ? "justify-center p-2" : "justify-between p-3")}>
+        {!collapsed && (
+          <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+            {lang === "ar" ? "القائمة" : "Menu"}
+          </span>
+        )}
+        <button
+          onClick={toggle}
+          className="text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors"
+          aria-label={collapsed ? (lang === "ar" ? "توسيع القائمة" : "Expand menu") : (lang === "ar" ? "طي القائمة" : "Collapse menu")}
+        >
+          {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
         </button>
       </div>
 
       <nav className="flex-1 p-3 space-y-1">
-        {items(lang).map((item) => {
-          const isActive = item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href)
-          return (
+        {items(lang).map((item) => (
+          <div key={item.href} className="relative group">
             <button
-              key={item.href}
               onClick={() => router.push(item.href)}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-[#0D0D0D] text-[#F2F2F2] dark:bg-[#F2F2F2] dark:text-[#0D0D0D]"
-                  : "text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#1A1A1A]"
+                buttonClass(isActive(item.href)),
+                collapsed ? "justify-center px-0" : ""
               )}
             >
               <item.icon size={18} />
-              {item.label}
+              {!collapsed && item.label}
             </button>
-          )
-        })}
+            {collapsed && (
+              <div className="absolute start-full top-1/2 -translate-y-1/2 ms-2 px-2 py-1 text-xs whitespace-nowrap bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 pointer-events-none">
+                {item.label}
+              </div>
+            )}
+          </div>
+        ))}
       </nav>
 
-      <div className="p-3 border-t border-[#D4D4D4] dark:border-[#333333] space-y-1">
-        <button
-          onClick={() => router.push("/dashboard/chat")}
-          className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#1A1A1A] transition-colors"
-        >
-          <MessageCircle size={18} />
-          {lang === "ar" ? "المساعد AI" : "AI Assistant"}
-        </button>
-        <button
-          onClick={() => { logout(); router.push("/admin/login") }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#1A1A1A] transition-colors"
-        >
-          <LogOut size={18} />
-          {lang === "ar" ? "تسجيل خروج" : "Logout"}
-        </button>
+      <div className={cn("border-t border-[#D4D4D4] dark:border-[#333333] space-y-1", collapsed ? "p-2" : "p-3")}>
+        <div className="relative group">
+          <button
+            onClick={() => router.push("/dashboard/chat")}
+            className={cn(
+              "w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#1A1A1A]",
+              collapsed ? "justify-center px-0" : ""
+            )}
+          >
+            <MessageCircle size={18} />
+            {!collapsed && (lang === "ar" ? "المساعد AI" : "AI Assistant")}
+          </button>
+          {collapsed && (
+            <div className="absolute end-full top-1/2 -translate-y-1/2 me-2 px-2 py-1 text-xs whitespace-nowrap bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 pointer-events-none">
+              {lang === "ar" ? "المساعد AI" : "AI Assistant"}
+            </div>
+          )}
+        </div>
+        <div className="relative group">
+          <button
+            onClick={() => { logout(); router.push("/") }}
+            className={cn(
+              "w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#1A1A1A]",
+              collapsed ? "justify-center px-0" : ""
+            )}
+          >
+            <LogOut size={18} />
+            {!collapsed && (lang === "ar" ? "تسجيل خروج" : "Logout")}
+          </button>
+          {collapsed && (
+            <div className="absolute end-full top-1/2 -translate-y-1/2 me-2 px-2 py-1 text-xs whitespace-nowrap bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 pointer-events-none">
+              {lang === "ar" ? "تسجيل خروج" : "Logout"}
+            </div>
+          )}
+        </div>
       </div>
     </aside>
   )

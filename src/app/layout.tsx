@@ -16,9 +16,10 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Monest — AI Commerce Intelligence",
+  title: "Monest — مجتمع رواد الأعمال",
   description:
-    "AI-powered commerce intelligence platform. Instant video meetings, CRM, and AI analytics for modern businesses.",
+    "Monest هو مجتمع رواد أعمال مع متابعة منظّمة — اجتماعات أسبوعية وفردية، تدريب شخصي، ومتابعة متجرك بالذكاء الاصطناعي.",
+  icons: { icon: "/fav.svg" },
 }
 
 export default function RootLayout({

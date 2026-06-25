@@ -5,6 +5,7 @@ import { useSettingsStore } from "@/stores/settings-store"
 import { permissions } from "@/lib/mock-data/dashboard"
 import { Store, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ToggleSwitch } from "@/components/ui/toggle-switch"
 
 export default function PermissionsPage() {
   const { direction } = useSettingsStore()
@@ -62,12 +63,7 @@ export default function PermissionsPage() {
             className="flex items-center justify-between px-5 py-4 border-b border-[#D4D4D4] dark:border-[#333333] hover:bg-[#E8E8E8] dark:hover:bg-[#1A1A1A] transition-colors cursor-pointer"
           >
             <span className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{perm.label[lang]}</span>
-            <button
-              onClick={() => toggle(perm.key)}
-              className={"w-12 h-7 relative transition-colors " + (enabled[perm.key] ? "bg-[#0D0D0D] dark:bg-[#F2F2F2]" : "bg-[#D4D4D4] dark:bg-[#333333]")}
-            >
-              <span className={"absolute top-0.5 w-6 h-6 bg-white transition-all " + (enabled[perm.key] ? "end-0.5" : "start-0.5")} />
-            </button>
+            <ToggleSwitch checked={enabled[perm.key]} onChange={() => toggle(perm.key)} />
           </label>
         ))}
       </div>
