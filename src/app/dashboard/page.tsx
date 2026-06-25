@@ -3,11 +3,12 @@
 import { useEffect, useState, useMemo, useCallback } from "react"
 import { useSettingsStore } from "@/stores/settings-store"
 import { dashboardStats, products, customerSegments, generateSalesDays } from "@/lib/mock-data/dashboard"
-import { Store, TrendingUp, TrendingDown, AlertTriangle, Star, Link as LinkIcon, RefreshCw, Download, Calendar, Filter, X, DollarSign, ShoppingCart, Users, Percent, ChartPie, ArrowUpRight, ArrowDownRight, Clock, Package, UserCheck, UserX, Zap } from "lucide-react"
+import { Store, TrendingUp, TrendingDown, AlertTriangle, Link as LinkIcon, RefreshCw, Download, Filter, X, DollarSign, ShoppingCart, Users, Percent, ChartPie, ArrowUpRight, Clock, Package, UserCheck, Zap } from "lucide-react"
 import { getSallaAuthUrl } from "@/lib/salla/config"
 import { GuidedTour } from "@/components/tour/guided-tour"
 import { HelpButton } from "@/components/tour/help-button"
 import { dashboardTourSteps } from "@/components/tour/tour-steps"
+import { SARIcon } from "@/components/ui/sar-icon"
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell
 } from "recharts"
@@ -18,16 +19,6 @@ interface DrillDownModal {
   open: boolean
   label: string
   data: any
-}
-
-function formatCurrency(value: number): string {
-  return value.toLocaleString("en-US") + " ر.س"
-}
-
-function formatShortCurrency(value: number): string {
-  if (value >= 1000000) return (value / 1000000).toFixed(1) + "M ر.س"
-  if (value >= 1000) return (value / 1000).toFixed(value >= 10000 ? 0 : 1) + "K ر.س"
-  return value.toLocaleString("en-US") + " ر.س"
 }
 
 function getPeriodLabel(period: Period, lang: string): string {
@@ -283,8 +274,8 @@ export default function DashboardPage() {
                   <Icon size={isMain ? 16 : 12} className={isMain ? "text-[#0D0D0D] dark:text-[#F2F2F2]" : "text-[#999999] dark:text-[#666666]"} />
                 </div>
                 <div className="flex items-end gap-1.5 flex-wrap">
-                  <span className={"font-bold text-[#0D0D0D] dark:text-[#F2F2F2] " + (isMain ? "text-xl md:text-2xl" : "text-base md:text-lg")}>
-                    {formatShortCurrency(s.value)}
+                  <span className={"font-bold text-[#0D0D0D] dark:text-[#F2F2F2] flex items-center gap-1 " + (isMain ? "text-xl md:text-2xl" : "text-base md:text-lg")}>
+                    {s.value.toLocaleString("en-US")} <SARIcon className={isMain ? "w-5 h-5" : "w-4 h-4"} />
                   </span>
                 </div>
                 <div className="flex items-center gap-1 mt-1">
@@ -330,7 +321,7 @@ export default function DashboardPage() {
                         fontSize: 12,
                         color: "#0D0D0D",
                       }}
-                      formatter={(value: any) => formatCurrency(Number(value) || 0)}
+                      formatter={(value: any) => <span className="flex items-center gap-1">{Number(value).toLocaleString("en-US")} <SARIcon className="w-3.5 h-3.5" /></span>}
                     />
                     <Legend
                       wrapperStyle={{ fontSize: 10, color: "#666" }}
@@ -372,7 +363,7 @@ export default function DashboardPage() {
                     <div className="min-w-0 flex-1">
                       <span className="text-xs md:text-sm text-[#0D0D0D] dark:text-[#F2F2F2] truncate block">{p.name[lang]}</span>
                       <span className="text-[9px] text-[#999999] dark:text-[#666666]">
-                        {p.price.toLocaleString("en-US")} ر.س · {p.category}
+                        {p.price.toLocaleString("en-US")} <SARIcon className="w-3 h-3" /> · {p.category}
                       </span>
                     </div>
                   </div>
@@ -438,7 +429,7 @@ export default function DashboardPage() {
                         <span className="text-[9px] text-[#999999] dark:text-[#666666]">{c.orders} {lang === "ar" ? "طلبات" : "orders"}</span>
                       </div>
                     </div>
-                    <span className="text-xs font-medium text-[#0D0D0D] dark:text-[#F2F2F2] shrink-0">{formatShortCurrency(c.total)}</span>
+                    <span className="text-xs font-medium text-[#0D0D0D] dark:text-[#F2F2F2] shrink-0 flex items-center gap-0.5">{c.total.toLocaleString("en-US")} <SARIcon className="w-3 h-3" /></span>
                   </div>
                 ))}
               </div>
@@ -516,7 +507,7 @@ export default function DashboardPage() {
             {drillDown.data?.type === "kpi" && (
               <div className="space-y-4">
                 <div className="flex items-end gap-3">
-                  <span className="text-3xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{formatShortCurrency(drillDown.data.stat.value)}</span>
+                  <span className="text-3xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2] flex items-center gap-1">{drillDown.data.stat.value.toLocaleString("en-US")} <SARIcon className="w-6 h-6" /></span>
                   <span className={"flex items-center gap-1 text-sm font-medium mb-1 " + getChangeColor(drillDown.data.stat.change)}>
                     {drillDown.data.stat.change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
                     {Math.abs(drillDown.data.stat.change)}%
@@ -538,7 +529,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#D4D4D4] dark:border-[#333333]">
                   <div>
                     <p className="text-[10px] text-[#999999] dark:text-[#666666]">{lang === "ar" ? "القيمة الحالية" : "Current Value"}</p>
-                    <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{formatShortCurrency(drillDown.data.stat.value)}</p>
+                    <p className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] flex items-center gap-1">{drillDown.data.stat.value.toLocaleString("en-US")} <SARIcon className="w-3.5 h-3.5" /></p>
                   </div>
                   <div>
                     <p className="text-[10px] text-[#999999] dark:text-[#666666]">{lang === "ar" ? "التغيير" : "Change"}</p>
@@ -559,7 +550,7 @@ export default function DashboardPage() {
                     <YAxis tick={{ fontSize: 10, fill: "#999" }} />
                     <Tooltip
                       contentStyle={{ background: "#F2F2F2", border: "1px solid #D4D4D4", borderRadius: 0, fontSize: 12, color: "#0D0D0D" }}
-                      formatter={(value: any) => formatCurrency(Number(value) || 0)}
+                      formatter={(value: any) => <span className="flex items-center gap-1">{Number(value).toLocaleString("en-US")} <SARIcon className="w-3.5 h-3.5" /></span>}
                     />
                     <Bar dataKey="sales" fill="#0D0D0D" className="dark:fill-[#F2F2F2]" radius={[2, 2, 0, 0]} />
                     <Bar dataKey="orders" fill="#999999" className="dark:fill-[#666666]" radius={[2, 2, 0, 0]} />
@@ -574,7 +565,7 @@ export default function DashboardPage() {
                   <div key={p.id} className="flex items-center justify-between p-3 bg-[#E8E8E8] dark:bg-[#1A1A1A]">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2] truncate">{p.name[lang]}</p>
-                      <p className="text-[10px] text-[#999999] dark:text-[#666666]">{p.price.toLocaleString("en-US")} ر.س · {p.category} · {lang === "ar" ? "مخزون" : "Stock"}: {p.stock}</p>
+                      <p className="text-[10px] text-[#999999] dark:text-[#666666] flex items-center gap-1">{p.price.toLocaleString("en-US")} <SARIcon className="w-3 h-3" /> · {p.category} · {lang === "ar" ? "مخزون" : "Stock"}: {p.stock}</p>
                     </div>
                     <span className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] shrink-0">{p.sales.toLocaleString("en-US")}</span>
                   </div>
