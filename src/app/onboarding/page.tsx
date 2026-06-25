@@ -107,38 +107,77 @@ export default function OnboardingPage() {
 
   if (scheduled) {
     const meetingLink = `/meetings/join/ONBOARD-${Date.now().toString(36).toUpperCase()}`
+    const dateStr = `${selectedDate}/${calMonth + 1}/${calYear}`
     return (
       <div className="flex-1 flex items-center justify-center p-4 bg-[#F2F2F2] dark:bg-[#0D0D0D] min-h-screen">
-        <div className="w-full max-w-md text-center space-y-6">
-          <div className="w-20 h-20 mx-auto rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-            <Check size={36} className="text-green-600 dark:text-green-400" />
-          </div>
-          <h1 className="text-2xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-            {lang === "ar" ? "تم حجز الاجتماع بنجاح!" : "Meeting Scheduled Successfully!"}
-          </h1>
-          <p className="text-sm text-[#666666] dark:text-[#999999]">
-            {lang === "ar"
-              ? `موعدك: ${selectedDate}/${calMonth + 1}/${calYear} الساعة ${selectedTime}`
-              : `Your appointment: ${selectedDate}/${calMonth + 1}/${calYear} at ${selectedTime}`}
-          </p>
-          <div className="p-5 border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] space-y-3">
-            <p className="text-xs font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-              {lang === "ar" ? "رابط الاجتماع" : "Meeting Link"}
-            </p>
-            <a href={meetingLink} target="_blank" rel="noopener noreferrer" className="block text-sm text-blue-600 dark:text-blue-400 underline break-all">
-              {window.location.origin + meetingLink}
-            </a>
-            <div className="flex items-center justify-center gap-2 text-sm text-[#666666] dark:text-[#999999]">
-              <Clock size={16} />
-              <span>
-                {lang === "ar" ? "الاجتماع محجوز - تعال بعد الموعد المحدد" : "Meeting is booked - come back at the scheduled time"}
-              </span>
+        <div className="w-full max-w-md space-y-5">
+          {/* Status Steps */}
+          <div className="space-y-3">
+            {/* Step 1: Account created */}
+            <div className="flex items-center gap-3 p-3 bg-white dark:bg-[#0D0D0D] border border-[#D4D4D4] dark:border-[#333333]">
+              <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+                <Check size={14} className="text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                  {lang === "ar" ? "تم إنشاء الحساب" : "Account Created"}
+                </p>
+                <p className="text-[10px] text-[#999999]">
+                  {lang === "ar" ? "بإنتظار تفعيل الحساب من قبل الإدارة" : "Waiting for admin activation"}
+                </p>
+              </div>
             </div>
-            <div className="text-xs text-[#999999] dark:text-[#666666]">
-              {lang === "ar" ? "30 دقيقة - تفاصيل الاجتماع عبر الويب" : "30 min - Web conferencing details provided upon confirmation"}
+
+            {/* Step 2: Meeting scheduled */}
+            <div className="flex items-center gap-3 p-3 bg-white dark:bg-[#0D0D0D] border border-[#D4D4D4] dark:border-[#333333]">
+              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+                <CalendarDays size={14} className="text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                  {lang === "ar" ? "تم حجز موعد المقابلة" : "Interview Scheduled"}
+                </p>
+                <p className="text-[10px] text-[#999999]">
+                  {lang === "ar" ? `تاريخ الحضور: ${dateStr} الساعة ${selectedTime}` : `Date: ${dateStr} at ${selectedTime}`}
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3: Meeting link (pending) */}
+            <div className="flex items-center gap-3 p-3 bg-white dark:bg-[#0D0D0D] border border-[#D4D4D4] dark:border-[#333333]">
+              <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                <Video size={14} className="text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                  {lang === "ar" ? "رابط الاجتماع" : "Meeting Link"}
+                </p>
+                <a href={meetingLink} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 dark:text-blue-400 underline break-all block truncate">
+                  {typeof window !== "undefined" ? window.location.origin + meetingLink : meetingLink}
+                </a>
+              </div>
             </div>
           </div>
-          <button onClick={() => router.push("/dashboard")} className="w-full h-12 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-sm font-bold hover:opacity-80 transition-opacity">
+
+          {/* Info card */}
+          <div className="p-4 border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] space-y-2 text-xs text-[#666666] dark:text-[#999999]">
+            <div className="flex items-center justify-between">
+              <span>{lang === "ar" ? "المدة" : "Duration"}</span>
+              <span className="font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">30 {lang === "ar" ? "دقيقة" : "min"}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>{lang === "ar" ? "النوع" : "Type"}</span>
+              <span className="font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "مقابلة تعريفية" : "Introductory Call"}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>{lang === "ar" ? "رقم الطلب" : "Request #"}</span>
+              <span className="font-bold text-[#0D0D0D] dark:text-[#F2F2F2] direction-ltr" dir="ltr">REQ-{Date.now().toString(36).toUpperCase()}</span>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <button onClick={() => router.push("/dashboard")}
+            className="w-full h-12 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-sm font-bold hover:opacity-80 transition-opacity">
             {lang === "ar" ? "الذهاب إلى لوحة التحكم" : "Go to Dashboard"}
           </button>
         </div>

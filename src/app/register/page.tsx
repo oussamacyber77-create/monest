@@ -2,12 +2,13 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Check, CreditCard, Calendar, ArrowLeft, ArrowRight } from "lucide-react"
+import { Check, CreditCard, Calendar, ArrowLeft, ArrowRight, Mail, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Stepper } from "@/components/register/stepper"
 import { useSettingsStore } from "@/stores/settings-store"
 import { useRegistrationTrackingStore } from "@/stores/registration-tracking-store"
+import { useAuthStore } from "@/stores/auth-store"
 import { mockLeads, type LeadStage } from "@/lib/mock-data/crm"
 import { pricingPlans, pricingPlanTypes, findPlan, type PricingPlanType } from "@/lib/mock-data/pricing"
 
