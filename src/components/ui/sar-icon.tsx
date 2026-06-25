@@ -1,10 +1,10 @@
-export function SARIcon({ className = "w-4 h-4" }) {
+export function SARIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
-    <span className={"inline-flex items-center justify-center font-medium " + className}
-      style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif" }}
-      aria-label="ريال سعودي"
-    >
-      ر.س
-    </span>
+    <img
+      src="https://media.base44.com/images/public/69bf8f66e7190f4348ed8d4d/019db90f4_SAR.png"
+      alt="ريال سعودي"
+      className={className}
+      style={{ objectFit: "contain" }}
+    />
   )
 }
