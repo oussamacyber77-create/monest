@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { MonestLogo } from "@/components/ui/monest-logo"
 import { useSettingsStore } from "@/stores/settings-store"
+import { useAuthStore } from "@/stores/auth-store"
 
 const providers = [
   { id: "google", name: "Google" },
@@ -17,6 +18,7 @@ const providers = [
 export default function LoginPage() {
   const router = useRouter()
   const { direction } = useSettingsStore()
+  const { login } = useAuthStore()
   const lang = direction === "rtl" ? "ar" : "en"
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -25,6 +27,7 @@ export default function LoginPage() {
   const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading("email")
+    login()
     setTimeout(() => {
       router.push("/dashboard")
     }, 600)
@@ -32,6 +35,7 @@ export default function LoginPage() {
 
   const handleLogin = (provider: string) => {
     setLoading(provider)
+    login()
     setTimeout(() => {
       router.push("/dashboard")
     }, 600)

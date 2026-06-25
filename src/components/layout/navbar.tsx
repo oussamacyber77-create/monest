@@ -2,18 +2,21 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Sun, Moon, Languages } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { Sun, Moon, Languages, User, LogOut } from "lucide-react"
 import { useSettingsStore } from "@/stores/settings-store"
+import { useAuthStore } from "@/stores/auth-store"
 import { cn } from "@/lib/utils"
 import { MonestLogo } from "@/components/ui/monest-logo"
 
 export function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const { direction, theme, toggleDirection, toggleTheme } = useSettingsStore()
+  const { isAdmin, logout, checkSession } = useAuthStore()
   const [mounted, setMounted] = useState(false)
 
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => { setMounted(true); checkSession() }, [checkSession])
 
   const links = [
     { href: "/meetings", label: { ar: "الاجتماعات", en: "Meetings" } },
@@ -63,18 +66,39 @@ export function Navbar() {
       <div className="flex items-center gap-1">
         {mounted && (
           <>
-            <Link
-              href="/auth/login"
-              className="px-3 py-1.5 text-xs font-medium border border-[#D4D4D4] dark:border-[#333333] text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors"
-            >
-              {lang === "ar" ? "تسجيل الدخول" : "Login"}
-            </Link>
-            <Link
-              href="/register"
-              className="px-3 py-1.5 text-xs font-medium bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] hover:opacity-90 transition-opacity"
-            >
-              {lang === "ar" ? "إنشاء حساب" : "Sign Up"}
-            </Link>
+            {isAdmin ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[#D4D4D4] dark:border-[#333333] text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors"
+                >
+                  <User size={14} />
+                  {lang === "ar" ? "حسابي" : "My Account"}
+                </Link>
+                <button
+                  onClick={() => { logout(); router.push("/auth/login") }}
+                  className="px-3 py-1.5 text-xs font-medium bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] hover:opacity-90 transition-opacity flex items-center gap-1.5"
+                >
+                  <LogOut size={14} />
+                  {lang === "ar" ? "تسجيل خروج" : "Logout"}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="px-3 py-1.5 text-xs font-medium border border-[#D4D4D4] dark:border-[#333333] text-[#666666] hover:text-[#0D0D0D] dark:text-[#999999] dark:hover:text-[#F2F2F2] transition-colors"
+                >
+                  {lang === "ar" ? "تسجيل الدخول" : "Login"}
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-3 py-1.5 text-xs font-medium bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] hover:opacity-90 transition-opacity"
+                >
+                  {lang === "ar" ? "إنشاء حساب" : "Sign Up"}
+                </Link>
+              </>
+            )}
           </>
         )}
         {mounted && (
