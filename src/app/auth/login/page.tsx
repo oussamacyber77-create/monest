@@ -23,7 +23,11 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { direction } = useSettingsStore()
+<<<<<<< HEAD
   const { role, checkSession, loginAsMember } = useAuthStore()
+=======
+  const { login } = useAuthStore()
+>>>>>>> 2f176ad86f91d847d681aead14606dbc03c4707f
   const lang = direction === "rtl" ? "ar" : "en"
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -46,6 +50,7 @@ function LoginForm() {
   const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading("email")
+    login()
     setTimeout(() => {
       router.push("/dashboard")
     }, 600)
@@ -53,6 +58,7 @@ function LoginForm() {
 
   const handleLogin = (provider: string) => {
     setLoading(provider)
+    login()
     setTimeout(() => {
 <<<<<<< HEAD
       loginAsMember()

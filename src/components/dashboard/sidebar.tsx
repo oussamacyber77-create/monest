@@ -3,10 +3,14 @@
 import { useState, useCallback } from "react"
 import { usePathname, useRouter } from "next/navigation"
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { LayoutDashboard, Brain, Users, Package, Megaphone, Archive, TrendingUp, MessageCircle, Settings, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 =======
 import { LayoutDashboard, Video, Users, PenTool, Megaphone, Globe, Settings, LogOut } from "lucide-react"
 >>>>>>> e27e9d3d4d737f3fa8d7df5493b213e1fb709893
+=======
+import { LayoutDashboard, Video, Users, PenTool, Megaphone, Globe, Settings, Crown, LogOut } from "lucide-react"
+>>>>>>> 2f176ad86f91d847d681aead14606dbc03c4707f
 import { useSettingsStore } from "@/stores/settings-store"
 import { useAuthStore } from "@/stores/auth-store"
 import { cn } from "@/lib/utils"
@@ -22,6 +26,7 @@ const commerceItems = (lang: string) => [
   { href: "/dashboard/content", label: lang === "ar" ? "مركز المحتوى" : "Content Center", icon: PenTool },
   { href: "/dashboard/marketing", label: lang === "ar" ? "مركز التسويق" : "Marketing Center", icon: Megaphone },
   { href: "/dashboard/site", label: lang === "ar" ? "إدارة الموقع" : "Site Management", icon: Globe },
+  { href: "/dashboard/plan", label: lang === "ar" ? "الباقة" : "Plan", icon: Crown },
   { href: "/dashboard/settings", label: lang === "ar" ? "الإعدادات" : "Settings", icon: Settings },
 ]
 

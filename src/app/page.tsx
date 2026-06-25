@@ -117,7 +117,7 @@ export default function Home() {
             </p>
             <div className="flex items-center justify-center gap-3">
               <button
-                onClick={() => router.push("/register")}
+                onClick={() => router.push("/onboarding")}
                 className="h-12 px-8 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-sm font-bold hover:opacity-90 transition-opacity"
               >
                 {lang === "ar" ? "انضم إلى المجتمع" : "Join the Community"}
