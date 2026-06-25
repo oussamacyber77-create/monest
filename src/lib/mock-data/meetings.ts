@@ -31,6 +31,10 @@ export interface MockMeetingInfo {
   organizer: string
   startTime: string
   password: string
+  date: string
+  duration: number
+  attendees: number
+  description?: { ar: string; en: string }
 }
 
 export const mockMeetings: MockMeeting[] = [
@@ -167,6 +171,10 @@ export const mockMeetingInfoMap: Record<string, MockMeetingInfo> = {
     organizer: "أحمد السالم",
     startTime: "10:00",
     password: "",
+    date: "2026-06-20",
+    duration: 47,
+    attendees: 8,
+    description: { ar: "مناقشة أداء الفريق للربع الثاني", en: "Team Q2 performance discussion" },
   },
 }
 

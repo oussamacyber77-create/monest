@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { Participant, Track, TrackPublication } from "livekit-client"
 import { cn } from "@/lib/utils"
 import { Mic, MicOff, User } from "lucide-react"
+import { useSettingsStore } from "@/stores/settings-store"
 
 interface VideoTileProps {
   participant: Participant
@@ -12,6 +13,8 @@ interface VideoTileProps {
 }
 
 export function VideoTile({ participant, isLocal, source = Track.Source.Camera }: VideoTileProps) {
+  const { direction } = useSettingsStore()
+  const lang = direction === "rtl" ? "ar" : "en"
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isMuted, setIsMuted] = useState(false)
   const [trackPub, setTrackPub] = useState<TrackPublication | null>(null)
@@ -58,7 +61,7 @@ export function VideoTile({ participant, isLocal, source = Track.Source.Camera }
   }, [participant])
 
   const displayName = isLocal
-    ? "You"
+    ? (lang === "ar" ? "أنت" : "You")
     : participant.name || "User " + participant.identity?.slice(-4)
 
   const showVideo = trackPub?.track && !trackPub.track.isMuted

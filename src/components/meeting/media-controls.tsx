@@ -1,7 +1,7 @@
 ﻿"use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Video, VideoOff, Mic, MicOff, Monitor, MessageCircle, LogOut, Copy, Hand, SmilePlus, Users } from "lucide-react"
+import { Video, VideoOff, Mic, MicOff, Monitor, MessageCircle, LogOut, Copy, Hand, SmilePlus, Users, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCopyLink } from "@/hooks/use-copy-link"
 import { useSettingsStore } from "@/stores/settings-store"
@@ -17,6 +17,7 @@ interface MediaControlsProps {
   onToggleScreenShare: () => void
   onToggleChat: () => void
   onToggleParticipants: () => void
+  onToggleSettings: () => void
   onLeave: () => void
   onReact: (emoji: string) => void
   onRaiseHand: () => void
@@ -35,6 +36,7 @@ export function MediaControls({
   onToggleScreenShare,
   onToggleChat,
   onToggleParticipants,
+  onToggleSettings,
   onLeave,
   onReact,
   onRaiseHand,
@@ -46,6 +48,8 @@ export function MediaControls({
   const { copied, copyLink } = useCopyLink(roomCode)
   const [showReactions, setShowReactions] = useState(false)
   const reactionsRef = useRef<HTMLDivElement>(null)
+  const { direction } = useSettingsStore()
+  const lang = direction === "rtl" ? "ar" : "en"
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -61,15 +65,28 @@ export function MediaControls({
 
   const activeStyle = "bg-[#0D0D0D] text-[#F2F2F2] dark:bg-[#F2F2F2] dark:text-[#0D0D0D]"
   const inactiveStyle = "text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#333333]"
+  const dangerStyle = "bg-[#DC2626]/10 text-[#DC2626] hover:bg-[#DC2626]/20"
+
+  const labels = {
+    camera: cameraOn ? (lang === "ar" ? "إيقاف الكاميرا" : "Camera On") : (lang === "ar" ? "تشغيل الكاميرا" : "Camera Off"),
+    mic: micOn ? (lang === "ar" ? "كتم الميكروفون" : "Mic On") : (lang === "ar" ? "تشغيل الميكروفون" : "Mic Off"),
+    screen: lang === "ar" ? "مشاركة الشاشة" : "Screen Share",
+    reactions: lang === "ar" ? "تفاعلات" : "Reactions",
+    participants: lang === "ar" ? "المشاركون" : "Participants",
+    chat: lang === "ar" ? "الدردشة" : "Chat",
+    copy: copied ? (lang === "ar" ? "تم النسخ!" : "Copied!") : (lang === "ar" ? "نسخ الرابط" : "Copy Link"),
+    leave: lang === "ar" ? "مغادرة" : "Leave",
+    settings: lang === "ar" ? "الإعدادات" : "Settings",
+  }
 
   return (
     <div className="px-4 py-3 bg-[#F2F2F2] dark:bg-[#0D0D0D] border-t border-[#D4D4D4] dark:border-[#333333]">
-      <div className="flex items-center justify-center gap-1 max-w-2xl mx-auto">
+      <div className="flex items-center justify-center gap-1 max-w-3xl mx-auto">
         <ControlButton
           icon={cameraOn ? Video : VideoOff}
           active={cameraOn}
           onClick={onToggleCamera}
-          label={cameraOn ? "Camera On" : "Camera Off"}
+          label={labels.camera}
           activeStyle={activeStyle}
           inactiveStyle={inactiveStyle}
         />
@@ -77,7 +94,7 @@ export function MediaControls({
           icon={micOn ? Mic : MicOff}
           active={micOn}
           onClick={onToggleMic}
-          label={micOn ? "Mic On" : "Mic Off"}
+          label={labels.mic}
           activeStyle={activeStyle}
           inactiveStyle={inactiveStyle}
         />
@@ -85,7 +102,7 @@ export function MediaControls({
           icon={Monitor}
           active={screenShare}
           onClick={onToggleScreenShare}
-          label="Screen Share"
+          label={labels.screen}
           activeStyle={activeStyle}
           inactiveStyle={inactiveStyle}
         />
@@ -97,7 +114,7 @@ export function MediaControls({
             icon={SmilePlus}
             active={showReactions}
             onClick={() => setShowReactions(!showReactions)}
-            label="Reactions"
+            label={labels.reactions}
             activeStyle={activeStyle}
             inactiveStyle={inactiveStyle}
           />
@@ -114,7 +131,7 @@ export function MediaControls({
           icon={Users}
           active={showParticipants}
           onClick={onToggleParticipants}
-          label="Participants"
+          label={labels.participants}
           activeStyle={activeStyle}
           inactiveStyle={inactiveStyle}
         />
@@ -122,10 +139,18 @@ export function MediaControls({
         <div className="w-px h-8 bg-[#D4D4D4] dark:bg-[#333333] mx-1" />
 
         <ControlButton
+          icon={Settings}
+          active={false}
+          onClick={onToggleSettings}
+          label={labels.settings}
+          activeStyle={activeStyle}
+          inactiveStyle={inactiveStyle}
+        />
+        <ControlButton
           icon={MessageCircle}
           active={showChat}
           onClick={onToggleChat}
-          label="Chat"
+          label={labels.chat}
           badge={chatUnread > 0 ? chatUnread : undefined}
           activeStyle={activeStyle}
           inactiveStyle={inactiveStyle}
@@ -134,7 +159,7 @@ export function MediaControls({
           icon={Copy}
           active={copied}
           onClick={copyLink}
-          label={copied ? "Copied!" : "Copy Link"}
+          label={labels.copy}
           activeStyle={activeStyle}
           inactiveStyle={inactiveStyle}
         />
@@ -143,11 +168,11 @@ export function MediaControls({
 
         <button
           onClick={onLeave}
-          className="flex items-center gap-2 px-4 py-2 bg-[#DC2626]/10 text-[#DC2626] hover:bg-[#DC2626]/20 transition-colors"
-          title="Leave Meeting"
+          className={"flex items-center gap-2 px-4 py-2 transition-colors " + dangerStyle}
+          title={labels.leave}
         >
           <LogOut size={18} />
-          <span className="text-sm font-medium hidden sm:inline">Leave</span>
+          <span className="text-sm font-medium hidden sm:inline">{labels.leave}</span>
         </button>
       </div>
     </div>
