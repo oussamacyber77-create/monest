@@ -195,28 +195,6 @@ export default function JoinPage({ params }: { params: Promise<{ roomId: string 
     }
   }
 
-  // Edge case: invalid/unknown room
-  if (!isValidMeeting && !isEnded) {
-    return (
-      <div className="flex-1 flex items-center justify-center p-4 md:p-8 bg-[#F2F2F2] dark:bg-[#0D0D0D]">
-        <div className="w-full max-w-md text-center space-y-4">
-          <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto">
-            <XCircle size={28} className="text-[#D97706]" />
-          </div>
-          <h1 className="text-xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-            {lang === "ar" ? "الاجتماع غير موجود" : "Meeting Not Found"}
-          </h1>
-          <p className="text-sm text-[#666666] dark:text-[#999999]">
-            {lang === "ar" ? "رمز الاجتماع غير صحيح أو أن الاجتماع قد أُلغي" : "The meeting ID is invalid or the meeting was cancelled"}
-          </p>
-          <Button onClick={() => router.push("/meetings")} className="mx-auto">
-            {lang === "ar" ? "العودة إلى الاجتماعات" : "Back to Meetings"}
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="flex-1 flex items-center justify-center p-3 md:p-8 bg-[#F2F2F2] dark:bg-[#0D0D0D] min-h-screen">
       <div className="w-full max-w-lg space-y-4 md:space-y-5">
@@ -230,9 +208,27 @@ export default function JoinPage({ params }: { params: Promise<{ roomId: string 
             {lang === "ar" ? "الانضمام إلى الاجتماع" : "Join Meeting"}
           </h1>
           <p className="text-xs md:text-sm text-[#666666] dark:text-[#999999]">
-            {lang === "ar" ? "جهّز الكاميرا والمايك للانضمام" : "Set up your camera and mic to join"}
+            {isValidMeeting
+              ? (lang === "ar" ? "جهّز الكاميرا والمايك للانضمام" : "Set up your camera and mic to join")
+              : (lang === "ar" ? "أدخل رمز الاجتماع للانضمام" : "Enter the meeting code to join")}
           </p>
+          {!meetingInfo && (
+            <p className="text-[10px] text-[#999999] mt-2 flex items-center justify-center gap-1">
+              <Shield size={10} />
+              {lang === "ar" ? "رمز الاجتماع" : "Meeting ID"}: <span className="font-mono font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{roomId}</span>
+            </p>
+          )}
         </div>
+
+        {/* Unknown room notice */}
+        {!meetingInfo && (
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-xs text-[#D97706]">
+            <AlertTriangle size={14} className="shrink-0" />
+            {lang === "ar"
+              ? "لم نتمكن من تحميل تفاصيل الاجتماع. يمكنك المحاولة على أي حال."
+              : "Could not load meeting details. You can still try to join."}
+          </div>
+        )}
 
         {/* Meeting Info Bar */}
         {meetingInfo && (

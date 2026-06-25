@@ -3,18 +3,27 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSettingsStore } from "@/stores/settings-store"
-import { User, Bell, Shield, CreditCard, Store, Lock, Globe, Moon, Sun, Languages, Save, Check, AlertTriangle, LogOut, Eye, EyeOff, Smartphone, Mail, Key, Wifi, Clock } from "lucide-react"
+import { User, Bell, Shield, CreditCard, Store, Lock, Globe, Moon, Sun, Languages, Save, Check, AlertTriangle, LogOut, Eye, EyeOff, Smartphone, Mail, Key, Wifi, Clock, Monitor } from "lucide-react"
 import { getSallaAuthUrl } from "@/lib/salla/config"
 import { SARIcon } from "@/components/ui/sar-icon"
+import { ConfirmModal } from "@/components/ui/confirm-modal"
+import { permissions as permissionList } from "@/lib/mock-data/dashboard"
 
 export default function SettingsPage() {
-  const { direction, theme, toggleDirection, toggleTheme } = useSettingsStore()
+  const { direction, theme, primaryColor, toggleDirection, toggleTheme, setPrimaryColor } = useSettingsStore()
   const router = useRouter()
   const lang = direction === "rtl" ? "ar" : "en"
 
   const [activeSection, setActiveSection] = useState("store")
   const [saved, setSaved] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [permEnabled, setPermEnabled] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {}
+    permissionList.forEach((p) => { initial[p.key] = true })
+    return initial
+  })
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; title: string; description: string; onConfirm: () => void; variant?: "danger" | "warning" | "info" }>({ open: false, title: "", description: "", onConfirm: () => {} })
+  const confirm = (title: string, desc: string, cb: () => void, variant?: "danger" | "warning" | "info") => setConfirmModal({ open: true, title, description: desc, onConfirm: cb, variant })
 
   const [form, setForm] = useState({
     storeName: "متجر الإلكترونيات",
@@ -36,9 +45,15 @@ export default function SettingsPage() {
     { id: "store", label: { ar: "المتجر", en: "Store" }, icon: Store },
     { id: "profile", label: { ar: "الملف الشخصي", en: "Profile" }, icon: User },
     { id: "security", label: { ar: "الأمان", en: "Security" }, icon: Lock },
+    { id: "twofactor", label: { ar: "التحقق بخطوتين", en: "2FA" }, icon: Shield },
+    { id: "sessions", label: { ar: "الجلسات النشطة", en: "Sessions" }, icon: Monitor },
+    { id: "history", label: { ar: "سجل الدخول", en: "Login History" }, icon: Clock },
     { id: "notifications", label: { ar: "الإشعارات", en: "Notifications" }, icon: Bell },
     { id: "payment", label: { ar: "طرق الدفع", en: "Payment" }, icon: CreditCard },
-    { id: "appearance", label: { ar: "المظهر", en: "Appearance" }, icon: Sun },
+    { id: "api-keys", label: { ar: "مفاتيح API", en: "API Keys" }, icon: Key },
+    { id: "permissions", label: { ar: "الصلاحيات", en: "Permissions" }, icon: Shield },
+    { id: "privacy", label: { ar: "الخصوصية", en: "Privacy" }, icon: Lock },
+    { id: "appearance", label: { ar: "المظهر واللغة", en: "Appearance" }, icon: Sun },
   ]
 
   return (
@@ -74,14 +89,7 @@ export default function SettingsPage() {
                 {s.label[lang]}
               </button>
             ))}
-            <hr className="my-2 border-[#D4D4D4] dark:border-[#333333]" />
-            <button
-              onClick={() => router.push("/dashboard/settings/permissions")}
-              className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-[#666666] hover:text-[#0D0D0D] hover:bg-[#E8E8E8] dark:text-[#999999] dark:hover:text-[#F2F2F2] dark:hover:bg-[#1A1A1A] transition-colors text-start"
-            >
-              <Shield size={16} />
-              {lang === "ar" ? "الصلاحيات" : "Permissions"}
-            </button>
+
           </div>
 
           {/* Content */}
@@ -124,9 +132,19 @@ export default function SettingsPage() {
                       </h3>
                       <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mt-1">{lang === "ar" ? "اربط متجرك بسلة للاستفادة من التحليلات" : "Connect your Salla store for analytics"}</p>
                     </div>
-                    <a href={getSallaAuthUrl()} target="_blank" rel="noopener noreferrer" className="h-10 px-4 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-xs font-bold hover:opacity-90 transition-opacity flex items-center gap-1.5">
-                      <Store size={14} /> {lang === "ar" ? "ربط" : "Connect"}
-                    </a>
+                    <div className="flex gap-2">
+                      <button onClick={() => confirm(
+                        lang === "ar" ? "إلغاء ربط المتجر" : "Disconnect Store",
+                        lang === "ar" ? "سيتم إلغاء ربط متجر سلة ولن تتمكن من الوصول لبيانات المتجر. أنت متأكد؟" : "This will disconnect your Salla store. You will lose access to store data. Are you sure?",
+                        () => setConfirmModal({ ...confirmModal, open: false }),
+                        "danger"
+                      )} className="h-10 px-4 bg-[#DC2626] text-white text-xs font-bold hover:bg-[#B91C1C] transition-colors flex items-center gap-1.5">
+                        <Store size={14} /> {lang === "ar" ? "إلغاء الربط" : "Disconnect"}
+                      </button>
+                      <a href={getSallaAuthUrl()} target="_blank" rel="noopener noreferrer" className="h-10 px-4 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-xs font-bold hover:opacity-90 transition-opacity flex items-center gap-1.5">
+                        <Store size={14} /> {lang === "ar" ? "إعادة ربط" : "Reconnect"}
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -270,6 +288,221 @@ export default function SettingsPage() {
               </div>
             )}
 
+            {/* === 2FA === */}
+            {activeSection === "twofactor" && (
+              <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <Shield size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                  <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "التحقق بخطوتين (2FA)" : "Two-Factor Authentication"}</h2>
+                </div>
+                <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-4">{lang === "ar" ? "أضف طبقة حماية إضافية لحسابك" : "Add an extra layer of security to your account"}</p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
+                    <div className="flex items-center gap-3">
+                      <Smartphone size={18} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                      <div>
+                        <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "تطبيق المصادقة" : "Authenticator App"}</p>
+                        <p className="text-[10px] text-[#999999]">{lang === "ar" ? "Google Authenticator, Authy" : "Google Authenticator, Authy"}</p>
+                      </div>
+                    </div>
+                    <button className="px-4 py-1.5 bg-[#0D0D0D] dark:bg-[#F2F2F2] text-[#F2F2F2] dark:text-[#0D0D0D] text-[10px] font-bold">{lang === "ar" ? "تفعيل" : "Enable"}</button>
+                  </div>
+                  <div className="flex items-center justify-between p-4 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
+                    <div className="flex items-center gap-3">
+                      <Mail size={18} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                      <div>
+                        <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "رمز البريد الإلكتروني" : "Email OTP Code"}</p>
+                        <p className="text-[10px] text-[#999999]">{lang === "ar" ? "استلام رمز تحقق على بريدك" : "Receive a verification code on your email"}</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-medium text-green-600">{lang === "ar" ? "مفعل" : "Active"}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-4 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
+                    <div className="flex items-center gap-3">
+                      <Smartphone size={18} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                      <div>
+                        <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "رسائل SMS" : "SMS Codes"}</p>
+                        <p className="text-[10px] text-[#999999]">{lang === "ar" ? "استلام رمز على جوالك المسجل" : "Receive codes on your registered phone"}</p>
+                      </div>
+                    </div>
+                    <button className="px-4 py-1.5 border border-[#D4D4D4] dark:border-[#333333] text-[10px] font-medium text-[#666666] hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2]">{lang === "ar" ? "تفعيل" : "Enable"}</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* === SESSIONS === */}
+            {activeSection === "sessions" && (
+              <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <Monitor size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                  <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "الجلسات النشطة" : "Active Sessions"}</h2>
+                </div>
+                <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-4">{lang === "ar" ? "أجهزة متصلة بحسابك حالياً" : "Devices currently connected to your account"}</p>
+                <div className="space-y-3">
+                  {[
+                    { device: lang === "ar" ? "Chrome على Windows" : "Chrome on Windows", icon: Monitor, ip: "192.168.1.100", lastActive: lang === "ar" ? "الآن" : "Now", current: true },
+                    { device: lang === "ar" ? "Safari على iPhone" : "Safari on iPhone", icon: Smartphone, ip: "192.168.1.101", lastActive: lang === "ar" ? "منذ ساعتين" : "2 hours ago", current: false },
+                    { device: lang === "ar" ? "Firefox على Mac" : "Firefox on Mac", icon: Monitor, ip: "10.0.0.55", lastActive: lang === "ar" ? "منذ 3 أيام" : "3 days ago", current: false },
+                  ].map((s, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
+                      <div className="flex items-center gap-3">
+                        <s.icon size={16} className="text-[#666666] dark:text-[#999999]" />
+                        <div>
+                          <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{s.device}{s.current ? ` (${lang === "ar" ? "هذا الجهاز" : "This device"})` : ""}</p>
+                          <p className="text-[10px] text-[#999999]">IP: {s.ip} · {s.lastActive}</p>
+                        </div>
+                      </div>
+                      {!s.current && <button onClick={() => confirm(
+                        lang === "ar" ? "إنهاء الجلسة" : "End Session",
+                        lang === "ar" ? "سيتم تسجيل الخروج من هذا الجهاز. أنت متأكد؟" : "You will be logged out from this device. Are you sure?",
+                        () => setConfirmModal({ ...confirmModal, open: false }),
+                        "warning"
+                      )} className="text-[10px] font-medium text-[#DC2626] hover:underline">{lang === "ar" ? "إنهاء الجلسة" : "End Session"}</button>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* === HISTORY === */}
+            {activeSection === "history" && (
+              <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <Clock size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                  <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "سجل الدخول" : "Login History"}</h2>
+                </div>
+                <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-4">{lang === "ar" ? "آخر محاولات تسجيل الدخول إلى حسابك" : "Recent login attempts to your account"}</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-[#D4D4D4] dark:border-[#333333]">
+                        <th className="text-start pb-3 font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "التاريخ" : "Date"}</th>
+                        <th className="text-start pb-3 font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "الجهاز" : "Device"}</th>
+                        <th className="text-start pb-3 font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">IP</th>
+                        <th className="text-end pb-3 font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "الحالة" : "Status"}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { date: "2026-06-25 10:30", device: "Chrome / Windows", ip: "192.168.1.100", status: "success" },
+                        { date: "2026-06-25 08:15", device: "Safari / iPhone", ip: "192.168.1.101", status: "success" },
+                        { date: "2026-06-24 22:45", device: "Chrome / Windows", ip: "192.168.1.100", status: "failed" },
+                        { date: "2026-06-24 14:00", device: "Firefox / Mac", ip: "10.0.0.55", status: "success" },
+                        { date: "2026-06-23 19:30", device: "Unknown / Linux", ip: "45.33.22.11", status: "failed" },
+                      ].map((entry, i) => (
+                        <tr key={i} className="border-b border-[#D4D4D4]/50 dark:border-[#333333]/50">
+                          <td className="py-2.5 text-[#666666]">{entry.date}</td>
+                          <td className="py-2.5 text-[#666666]">{entry.device}</td>
+                          <td className="py-2.5 text-[#999999]">{entry.ip}</td>
+                          <td className="text-end py-2.5">
+                            <span className={"text-[9px] font-bold px-1.5 py-0.5 " + (entry.status === "success" ? "text-green-600 bg-green-50 dark:bg-green-900/20" : "text-red-600 bg-red-50 dark:bg-red-900/20")}>
+                              {entry.status === "success" ? (lang === "ar" ? "ناجح" : "Success") : (lang === "ar" ? "فاشل" : "Failed")}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* === API KEYS === */}
+            {activeSection === "api-keys" && (
+              <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <Key size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                  <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "مفاتيح API" : "API Keys"}</h2>
+                </div>
+                <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-4">{lang === "ar" ? "إدارة مفاتيح API للتكامل مع التطبيقات الخارجية" : "Manage API keys for third-party integrations"}</p>
+                <div className="space-y-3">
+                  {[
+                    { name: "Production Key", key: "mnst_prod_••••••••••a3k9", created: "2026-05-15", lastUsed: "2026-06-25", active: true },
+                    { name: "Development Key", key: "mnst_dev_••••••••••x7p2", created: "2026-06-01", lastUsed: "2026-06-24", active: true },
+                    { name: "Test Key (Expired)", key: "mnst_test_••••••••••r8fv", created: "2026-01-10", lastUsed: "2026-03-15", active: false },
+                  ].map((k, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 border border-[#D4D4D4] dark:border-[#333333]">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{k.name}</p>
+                        <p className="text-[10px] font-mono text-[#999999] mt-0.5">{k.key}</p>
+                        <p className="text-[9px] text-[#999999] mt-0.5">{lang === "ar" ? "تم الإنشاء" : "Created"}: {k.created} · {lang === "ar" ? "آخر استخدام" : "Last used"}: {k.lastUsed}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={"text-[9px] font-bold px-1.5 py-0.5 " + (k.active ? "text-green-600 bg-green-50 dark:bg-green-900/20" : "text-red-600 bg-red-50 dark:bg-red-900/20")}>
+                          {k.active ? (lang === "ar" ? "نشط" : "Active") : (lang === "ar" ? "منتهي" : "Expired")}
+                        </span>
+                        {k.active && <button onClick={() => confirm(
+                          lang === "ar" ? "تعطيل مفتاح API" : "Revoke API Key",
+                          lang === "ar" ? "سيتم تعطيل مفتاح API هذا ولن تعمل التطبيقات المرتبطة به. أنت متأكد؟" : "This API key will be revoked. Connected apps will stop working. Are you sure?",
+                          () => setConfirmModal({ ...confirmModal, open: false }),
+                          "danger"
+                        )} className="text-[10px] text-[#DC2626] hover:underline">{lang === "ar" ? "تعطيل" : "Revoke"}</button>}
+                      </div>
+                    </div>
+                  ))}
+                  <button className="w-full h-10 border border-dashed border-[#D4D4D4] dark:border-[#333333] text-xs font-medium text-[#999999] hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2] transition-colors flex items-center justify-center gap-1.5">
+                    <Key size={14} /> {lang === "ar" ? "إنشاء مفتاح جديد" : "Generate New Key"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* === PERMISSIONS === */}
+            {activeSection === "permissions" && (
+              <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <Shield size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                  <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "الصلاحيات" : "Permissions"}</h2>
+                </div>
+                <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-4">{lang === "ar" ? "إدارة صلاحيات متجر سلة والوصول للبيانات" : "Manage Salla store permissions and data access"}</p>
+                <div className="space-y-1">
+                  {permissionList.map((perm: any) => (
+                    <div key={perm.key} className="flex items-center justify-between py-3 border-b border-[#D4D4D4]/50 dark:border-[#333333]/50">
+                      <div>
+                        <p className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{perm.label[lang]}</p>
+                        <p className="text-[10px] text-[#999999]">{perm.description?.[lang] || ""}</p>
+                      </div>
+                      <button onClick={() => setPermEnabled((e) => ({ ...e, [perm.key]: !e[perm.key] }))}
+                        className={"w-12 h-7 relative transition-colors shrink-0 " + (permEnabled[perm.key] ? "bg-[#0D0D0D] dark:bg-[#F2F2F2]" : "bg-[#D4D4D4] dark:bg-[#333333]")}>
+                        <span className={"absolute top-0.5 w-6 h-6 bg-white transition-all " + (permEnabled[perm.key] ? "end-0.5" : "start-0.5")} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* === PRIVACY === */}
+            {activeSection === "privacy" && (
+              <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <Lock size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+                  <h2 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{lang === "ar" ? "الخصوصية" : "Privacy"}</h2>
+                </div>
+                <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-4">{lang === "ar" ? "إعدادات الخصوصية والبيانات" : "Privacy and data settings"}</p>
+                <div className="space-y-3">
+                  {[
+                    { label: { ar: "إظهور في قائمة أعضاء المجتمع", en: "Show in community member list" }, on: true },
+                    { label: { ar: "مشاركة بيانات الاستخدام لتحسين المنصة", en: "Share usage data to improve the platform" }, on: true },
+                    { label: { ar: "استلام العروض الترويجية عبر البريد", en: "Receive promotional emails" }, on: false },
+                    { label: { ar: "السماح للتطبيقات الخارجية بالوصول لبياناتي", en: "Allow third-party apps to access my data" }, on: false },
+                  ].map((p, i) => (
+                    <div key={i} className="flex items-center justify-between py-2.5 px-3 bg-[#F2F2F2] dark:bg-[#1A1A1A]">
+                      <span className="text-xs text-[#666666] dark:text-[#B3B3B3]">{p.label[lang]}</span>
+                      <button className={"w-10 h-5 rounded-full transition-colors relative " + (p.on ? "bg-[#0D0D0D] dark:bg-[#F2F2F2]" : "bg-[#D4D4D4] dark:bg-[#333333]")}>
+                        <span className={"absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all " + (p.on ? "start-[22px]" : "start-0.5")} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-xs text-amber-700 dark:text-amber-400 flex items-start gap-2">
+                  <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                  {lang === "ar" ? "يمكنك تصدير أو حذف بياناتك في أي وقت من خلال التواصل مع فريق الدعم." : "You can export or delete your data anytime by contacting our support team."}
+                </div>
+              </div>
+            )}
+
             {/* === APPEARANCE === */}
             {activeSection === "appearance" && (
               <>
@@ -309,6 +542,36 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
+                {/* Color customization */}
+                <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
+                  <h3 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-1 flex items-center gap-1.5"><Moon size={14} /> {lang === "ar" ? "تخصيص الألوان" : "Color Customization"}</h3>
+                  <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-4">{lang === "ar" ? "اختر الألوان الرئيسية للمنصة حسب علامتك التجارية" : "Choose the primary colors for the platform based on your brand"}</p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-[10px] font-medium text-[#999999] mb-2">{lang === "ar" ? "اللون الرئيسي" : "Primary Color"}</p>
+                      <div className="flex items-center gap-2">
+                        <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)}
+                          className="w-10 h-10 p-0.5 border border-[#D4D4D4] dark:border-[#333333] cursor-pointer" />
+                        <span className="text-[10px] font-mono text-[#666666]">{primaryColor}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-medium text-[#999999] mb-2">{lang === "ar" ? "لون الزر الأساسي" : "Button Color"}</p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 border border-[#D4D4D4] dark:border-[#333333]" style={{ backgroundColor: primaryColor }} />
+                        <span className="text-[10px] text-[#666666]">{lang === "ar" ? "معاينة" : "Preview"}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-medium text-[#999999] mb-2">{lang === "ar" ? "إعادة تعيين" : "Reset"}</p>
+                      <button onClick={() => setPrimaryColor("#0D0D0D")}
+                        className="h-10 px-3 border border-[#D4D4D4] dark:border-[#333333] text-[10px] font-medium text-[#666666] hover:text-[#0D0D0D] dark:hover:text-[#F2F2F2]">
+                        {lang === "ar" ? "الافتراضي" : "Default"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Timezone */}
                 <div className="border border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] p-5">
                   <h3 className="text-sm font-bold text-[#0D0D0D] dark:text-[#F2F2F2] mb-1 flex items-center gap-1.5"><Clock size={14} /> {lang === "ar" ? "المنطقة الزمنية" : "Timezone"}</h3>
@@ -324,6 +587,16 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+      <ConfirmModal
+        isOpen={confirmModal.open}
+        onClose={() => setConfirmModal({ ...confirmModal, open: false })}
+        onConfirm={() => { confirmModal.onConfirm(); setConfirmModal({ ...confirmModal, open: false }) }}
+        title={confirmModal.title}
+        description={confirmModal.description}
+        confirmLabel={lang === "ar" ? "تأكيد" : "Confirm"}
+        cancelLabel={lang === "ar" ? "إلغاء" : "Cancel"}
+        variant={confirmModal.variant || "danger"}
+      />
     </div>
   )
 }
