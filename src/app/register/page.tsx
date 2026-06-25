@@ -38,7 +38,6 @@ function RegisterContent() {
   const searchParams = useSearchParams()
   const { direction } = useSettingsStore()
   const { startSession, updateStep, completeSession, currentSessionId, sessions } = useRegistrationTrackingStore()
-  const { loginAsMember } = useAuthStore()
   const lang = direction === "rtl" ? "ar" : "en"
 
   const [step, setStep] = useState(1)
@@ -105,7 +104,15 @@ function RegisterContent() {
     if (!sessionId) return
     setPaymentSuccess(true)
     completeSession(sessionId)
-    loginAsMember()
+    const mockUser = {
+      id: "mock-member-" + crypto.randomUUID(),
+      email: name.toLowerCase().replace(/\s+/g, ".") + "@monest.demo",
+      app_metadata: {},
+      user_metadata: { name, phone: countryCode + phone },
+      aud: "authenticated",
+      created_at: new Date().toISOString(),
+    } as const
+    useAuthStore.setState({ user: mockUser as any, isAdmin: false })
     setTimeout(() => router.push("/register/success"), 1500)
   }
 

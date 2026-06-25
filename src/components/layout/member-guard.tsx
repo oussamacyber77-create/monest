@@ -1,27 +1,19 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useAuthStore } from "@/stores/auth-store"
 
 export function MemberGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  const { role, isLoading, checkSession } = useAuthStore()
-  const checked = useRef(false)
+  const { user, isLoading } = useAuthStore()
 
   useEffect(() => {
-    if (!checked.current) {
-      checkSession()
-      checked.current = true
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isLoading && role === "guest") {
+    if (!isLoading && !user) {
       router.replace("/auth/login?redirect=" + encodeURIComponent(pathname))
     }
-  }, [isLoading, role, pathname, router])
+  }, [isLoading, user, pathname, router])
 
   if (isLoading) {
     return (
@@ -31,7 +23,7 @@ export function MemberGuard({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (role === "guest") return null
+  if (!user) return null
 
   return <>{children}</>
 }
