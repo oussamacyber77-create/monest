@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Room } from "livekit-client"
-import { X, Send, Lock, Paperclip, FileText, Download } from "lucide-react"
+import { X, Send, Lock, Paperclip, FileText, Download, User } from "lucide-react"
 import { useChatStore } from "@/stores/chat-store"
 import { useRoomStore } from "@/stores/room-store"
 import { useSettingsStore } from "@/stores/settings-store"
@@ -80,6 +80,21 @@ export function ChatPanel({ room, onClose }: ChatPanelProps) {
     setShowFilePicker(false)
   }
 
+  const formatTime = (ts: number) => {
+    const d = new Date(ts)
+    return d.toLocaleTimeString(lang === "ar" ? "ar-SA" : "en-US", { hour: "2-digit", minute: "2-digit" })
+  }
+
+  const formatDate = (ts: number) => {
+    const d = new Date(ts)
+    const today = new Date()
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
+    if (d.toDateString() === today.toDateString()) return lang === "ar" ? "اليوم" : "Today"
+    if (d.toDateString() === yesterday.toDateString()) return lang === "ar" ? "أمس" : "Yesterday"
+    return d.toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", { day: "numeric", month: "short" })
+  }
+
   return (
     <div className="w-80 border-s border-[#D4D4D4] dark:border-[#333333] bg-[#F2F2F2] dark:bg-[#0D0D0D] flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-[#D4D4D4] dark:border-[#333333]">
@@ -94,45 +109,69 @@ export function ChatPanel({ room, onClose }: ChatPanelProps) {
         </button>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <p className="text-sm text-[#999999] dark:text-[#666666] text-center mt-8">
             {lang === "ar" ? "لا توجد رسائل بعد" : "No messages yet"}
           </p>
         )}
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={"flex flex-col " + (msg.sender === identity ? "items-end" : "items-start")}
-          >
-            <div className="flex items-center gap-1 mb-1">
-              {msg.isPrivate && <Lock size={10} className="text-[#999999]" />}
-              <span className="text-xs text-[#999999] dark:text-[#666666]">{msg.senderDisplayName}</span>
-            </div>
-            {msg.attachment ? (
-              <div className={"flex items-center gap-2 px-3 py-2 text-sm max-w-[80%] " + (msg.sender === identity
-                ? "bg-[#0D0D0D] text-[#F2F2F2] dark:bg-[#F2F2F2] dark:text-[#0D0D0D]"
-                : "bg-[#E8E8E8] dark:bg-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2]")}>
-                <FileText size={14} />
-                <div className="min-w-0">
-                  <p className="truncate text-xs">{msg.attachment.name}</p>
-                  <p className="text-[10px] opacity-60">{msg.attachment.size}</p>
+        {messages.map((msg, idx) => {
+          const isMe = msg.sender === identity
+          const prevMsg = idx > 0 ? messages[idx - 1] : null
+          const prevSameSender = prevMsg?.sender === msg.sender
+          const showHeader = !prevSameSender
+          const msgDate = formatDate(msg.timestamp)
+          const prevDate = prevMsg ? formatDate(prevMsg.timestamp) : ""
+          const showDateDivider = prevMsg && msgDate !== prevDate
+
+          return (
+            <div key={msg.id}>
+              {showDateDivider && (
+                <div className="flex items-center gap-2 my-3">
+                  <div className="flex-1 h-px bg-[#D4D4D4] dark:bg-[#333333]" />
+                  <span className="text-[10px] text-[#999999] dark:text-[#666666] shrink-0">{prevDate}</span>
+                  <div className="flex-1 h-px bg-[#D4D4D4] dark:bg-[#333333]" />
                 </div>
-                <button className="p-1 hover:opacity-60 transition-opacity">
-                  <Download size={12} />
-                </button>
+              )}
+              <div className={"flex flex-col " + (isMe ? "items-end" : "items-start")}>
+                {showHeader && (
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-6 h-6 bg-[#D4D4D4] dark:bg-[#333333] flex items-center justify-center shrink-0">
+                      <User size={12} className="text-[#666666] dark:text-[#999999]" />
+                    </div>
+                    <span className="text-xs font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
+                      {msg.senderDisplayName}
+                    </span>
+                    {msg.isPrivate && <Lock size={10} className="text-[#DC2626]" />}
+                  </div>
+                )}
+                {msg.attachment ? (
+                  <div className={"flex items-center gap-2 px-3 py-2 text-sm max-w-[80%] " + (isMe
+                    ? "bg-[#0D0D0D] text-[#F2F2F2] dark:bg-[#F2F2F2] dark:text-[#0D0D0D]"
+                    : "bg-[#E8E8E8] dark:bg-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2]")}>
+                    <FileText size={14} />
+                    <div className="min-w-0">
+                      <p className="truncate text-xs">{msg.attachment.name}</p>
+                      <p className="text-[10px] opacity-60">{msg.attachment.size}</p>
+                    </div>
+                    <button className="p-1 hover:opacity-60 transition-opacity">
+                      <Download size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className={"max-w-[80%] px-3 py-2 text-sm " + (isMe
+                    ? "bg-[#0D0D0D] text-[#F2F2F2] dark:bg-[#F2F2F2] dark:text-[#0D0D0D]"
+                    : "bg-[#E8E8E8] dark:bg-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2]")}>
+                    {msg.message}
+                  </div>
+                )}
+                <span className="text-[10px] text-[#999999] dark:text-[#666666] mt-0.5 px-1">
+                  {formatTime(msg.timestamp)}
+                </span>
               </div>
-            ) : (
-              <div
-                className={"max-w-[80%] px-3 py-2 text-sm " + (msg.sender === identity
-                  ? "bg-[#0D0D0D] text-[#F2F2F2] dark:bg-[#F2F2F2] dark:text-[#0D0D0D]"
-                  : "bg-[#E8E8E8] dark:bg-[#333333] text-[#0D0D0D] dark:text-[#F2F2F2]")}
-              >
-                {msg.message}
-              </div>
-            )}
-          </div>
-        ))}
+            </div>
+          )
+        })}
       </div>
 
       {showFilePicker && (

@@ -5,6 +5,7 @@
   identity: string;
   displayName: string;
   isAdmin: boolean;
+  consentGiven: boolean;
 }
 
 export interface ChatMessage {

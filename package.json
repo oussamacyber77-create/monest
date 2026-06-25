@@ -11,6 +11,8 @@
   "dependencies": {
     "@livekit/components-react": "^2.9.21",
     "@next/font": "^14.2.15",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.41.0",
     "livekit-client": "^2.19.2",
@@ -18,8 +20,10 @@
     "lucide-react": "^1.21.0",
     "nanoid": "^5.1.15",
     "next": "16.2.9",
+    "pg": "^8.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "recharts": "^3.9.0",
     "tailwind-merge": "^3.6.0",
     "zustand": "^5.0.14"
   },

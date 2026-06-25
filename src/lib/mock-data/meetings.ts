@@ -31,6 +31,12 @@ export interface MockMeetingInfo {
   organizer: string
   startTime: string
   password: string
+  date: string
+  duration: number
+  attendees: number
+  description?: { ar: string; en: string }
+  hostJoined: boolean
+  ended?: boolean
 }
 
 export const mockMeetings: MockMeeting[] = [
@@ -161,12 +167,41 @@ export const mockParticipants: MockParticipant[] = [
 ]
 
 export const mockMeetingInfoMap: Record<string, MockMeetingInfo> = {
-  "demo-001": {
-    id: "demo-001",
+  "aB3xK9mZ": {
+    id: "aB3xK9mZ",
     title: { ar: "مراجعة أداء الربع الثاني", en: "Q2 Performance Review" },
     organizer: "أحمد السالم",
     startTime: "10:00",
     password: "",
+    date: "2026-06-20",
+    duration: 47,
+    attendees: 8,
+    description: { ar: "مناقشة أداء الفريق للربع الثاني", en: "Team Q2 performance discussion" },
+    hostJoined: false,
+  },
+  "X7pQ2wRn": {
+    id: "X7pQ2wRn",
+    title: { ar: "تخطيط استراتيجية المنتج", en: "Product Strategy Planning" },
+    organizer: "سارة الحربي",
+    startTime: "14:30",
+    password: "1234",
+    date: "2026-06-25",
+    duration: 62,
+    attendees: 0,
+    description: { ar: "مناقشة خارطة طريق المنتج للربع القادم", en: "Next quarter product roadmap discussion" },
+    hostJoined: true,
+  },
+  "tR8vF5cE": {
+    id: "tR8vF5cE",
+    title: { ar: "عرض تقدم المشروع", en: "Project Progress Demo" },
+    organizer: "فهد العتيبي",
+    startTime: "16:00",
+    password: "",
+    date: "2026-06-26",
+    duration: 35,
+    attendees: 0,
+    description: { ar: "عرض تقدم مشروع العميل الجديد", en: "New client project progress demo" },
+    hostJoined: false,
   },
 }
 

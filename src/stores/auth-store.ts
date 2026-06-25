@@ -1,40 +1,70 @@
 import { create } from "zustand"
-
-export type UserRole = "guest" | "member" | "admin"
+import { createClient } from "@/lib/supabase/client"
+import type { User } from "@supabase/supabase-js"
 
 interface AuthState {
-  role: UserRole
+  user: User | null
+  isAdmin: boolean
   isLoading: boolean
-  loginAsAdmin: () => void
-  loginAsMember: () => void
-  logout: () => void
-  checkSession: () => void
+  login: (email: string, password: string) => Promise<{ error?: string }>
+  signup: (email: string, password: string, name: string, phone?: string) => Promise<{ error?: string }>
+  logout: () => Promise<void>
+  initialize: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  role: "guest",
+  user: null,
+  isAdmin: false,
   isLoading: true,
 
-  loginAsAdmin: () => {
-    sessionStorage.setItem("monest-admin", "1")
-    set({ role: "admin", isLoading: false })
+  initialize: async () => {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (session?.user) {
+      set({
+        user: session.user,
+        isAdmin: session.user.app_metadata?.role === "admin" || false,
+        isLoading: false,
+      })
+    } else {
+      set({ isLoading: false })
+    }
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        set({
+          user: session.user,
+          isAdmin: session.user.app_metadata?.role === "admin" || false,
+          isLoading: false,
+        })
+      } else {
+        set({ user: null, isAdmin: false, isLoading: false })
+      }
+    })
   },
 
-  loginAsMember: () => {
-    sessionStorage.setItem("monest-member", "1")
-    set({ role: "member", isLoading: false })
+  login: async (email: string, password: string) => {
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) return { error: error.message }
+    return {}
   },
 
-  logout: () => {
-    sessionStorage.removeItem("monest-admin")
-    sessionStorage.removeItem("monest-member")
-    set({ role: "guest", isLoading: false })
+  signup: async (email: string, password: string, name: string, phone?: string) => {
+    const supabase = createClient()
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name, phone: phone || "" } },
+    })
+    if (error) return { error: error.message }
+    return {}
   },
 
-  checkSession: () => {
-    const isAdmin = sessionStorage.getItem("monest-admin") === "1"
-    const isMember = sessionStorage.getItem("monest-member") === "1"
-    const role: UserRole = isAdmin ? "admin" : isMember ? "member" : "guest"
-    set({ role, isLoading: false })
+  logout: async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    set({ user: null, isAdmin: false })
   },
 }))

@@ -178,20 +178,20 @@ const aiChatResponses: Record<string, { ar: string; en: string }> = {
 }
 
 const permissions = [
-  { key: "customers", label: { ar: "إدارة العملاء", en: "Customer Management" } },
-  { key: "orders", label: { ar: "إدارة الطلبات", en: "Order Management" } },
-  { key: "carts", label: { ar: "إدارة السلات", en: "Cart Management" } },
-  { key: "branches", label: { ar: "إدارة الفروع", en: "Branch Management" } },
-  { key: "products", label: { ar: "إدارة المنتجات", en: "Product Management" } },
-  { key: "webhooks", label: { ar: "Webhooks", en: "Webhooks" } },
-  { key: "payments", label: { ar: "إدارة المدفوعات", en: "Payment Management" } },
-  { key: "taxes", label: { ar: "إدارة الضرائب", en: "Tax Management" } },
-  { key: "shipping", label: { ar: "إدارة الشحن", en: "Shipping Management" } },
-  { key: "marketing", label: { ar: "إدارة التسويق", en: "Marketing Management" } },
-  { key: "reports", label: { ar: "التقارير", en: "Reports" } },
-  { key: "analytics", label: { ar: "التحليلات", en: "Analytics" } },
-  { key: "coupons", label: { ar: "القسائم والخصومات", en: "Coupons & Discounts" } },
-  { key: "reviews", label: { ar: "التقييمات", en: "Reviews" } },
+  { key: "customers", label: { ar: "إدارة العملاء", en: "Customer Management" }, description: { ar: "الوصول إلى بيانات العملاء وإدارتها", en: "Access and manage customer data" } },
+  { key: "orders", label: { ar: "إدارة الطلبات", en: "Order Management" }, description: { ar: "عرض وإدارة جميع الطلبات", en: "View and manage all orders" } },
+  { key: "carts", label: { ar: "إدارة السلات", en: "Cart Management" }, description: { ar: "الوصول إلى سلات التسوق", en: "Access shopping carts" } },
+  { key: "branches", label: { ar: "إدارة الفروع", en: "Branch Management" }, description: { ar: "إدارة فروع المتجر", en: "Manage store branches" } },
+  { key: "products", label: { ar: "إدارة المنتجات", en: "Product Management" }, description: { ar: "إضافة وتعديل وحذف المنتجات", en: "Add, edit and delete products" } },
+  { key: "webhooks", label: { ar: "Webhooks", en: "Webhooks" }, description: { ar: "إدارة نقاط الاتصال الخارجية", en: "Manage external webhook endpoints" } },
+  { key: "payments", label: { ar: "إدارة المدفوعات", en: "Payment Management" }, description: { ar: "إدارة طرق الدفع والمعاملات", en: "Manage payment methods and transactions" } },
+  { key: "taxes", label: { ar: "إدارة الضرائب", en: "Tax Management" }, description: { ar: "إعدادات الضرائب", en: "Tax configuration settings" } },
+  { key: "shipping", label: { ar: "إدارة الشحن", en: "Shipping Management" }, description: { ar: "إعدادات الشحن والتوصيل", en: "Shipping and delivery settings" } },
+  { key: "marketing", label: { ar: "إدارة التسويق", en: "Marketing Management" }, description: { ar: "الوصول إلى أدوات التسويق", en: "Access marketing tools" } },
+  { key: "reports", label: { ar: "التقارير", en: "Reports" }, description: { ar: "عرض جميع التقارير", en: "View all reports" } },
+  { key: "analytics", label: { ar: "التحليلات", en: "Analytics" }, description: { ar: "الوصول إلى لوحة التحليلات", en: "Access analytics dashboard" } },
+  { key: "coupons", label: { ar: "القسائم والخصومات", en: "Coupons & Discounts" }, description: { ar: "إدارة القسائم والخصومات", en: "Manage coupons and discounts" } },
+  { key: "reviews", label: { ar: "التقييمات", en: "Reviews" }, description: { ar: "إدارة تقييمات المنتجات", en: "Manage product reviews" } },
 ]
 
 const bestCampaigns: Campaign[] = [

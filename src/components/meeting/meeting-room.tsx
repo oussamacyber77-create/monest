@@ -14,6 +14,7 @@ import { ConnectionBadge } from "@/components/meeting/connection-badge"
 import { MeetingId } from "@/components/meeting/meeting-id"
 import { ParticipantsPanel } from "@/components/meeting/participants-panel"
 import { AdminMeetingBar } from "@/components/meeting/admin-meeting-bar"
+import { SettingsPanel } from "@/components/meeting/settings-panel"
 import { useChatStore } from "@/stores/chat-store"
 import { useAudioHandler } from "@/lib/use-audio"
 import { useSettingsStore } from "@/stores/settings-store"
@@ -30,11 +31,13 @@ export function MeetingRoom({ roomCode, isAdmin = false }: MeetingRoomProps) {
   const [isConnected, setIsConnected] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [showParticipants, setShowParticipants] = useState(false)
-  const [cameraOn, setCameraOn] = useState(true)
-  const [micOn, setMicOn] = useState(true)
+  const [showSettings, setShowSettings] = useState(false)
+  const [cameraOn, setCameraOn] = useState(false)
+  const [micOn, setMicOn] = useState(false)
   const [screenShare, setScreenShare] = useState(false)
   const { liveKitToken, displayName, phone, identity, clearRoom } = useRoomStore()
-  const { theme } = useSettingsStore()
+  const { theme, direction } = useSettingsStore()
+  const lang = direction === "rtl" ? "ar" : "en"
   const addMessage = useChatStore((s) => s.addMessage)
 
   const {
@@ -69,7 +72,6 @@ export function MeetingRoom({ roomCode, isAdmin = false }: MeetingRoomProps) {
           })
         }
         if (data.type === "reaction" && data.emoji) {
-          const name = data.senderName || "User"
           const showReaction = useMeetingStore.getState().showReaction
           showReaction(data.emoji)
         }
@@ -119,9 +121,6 @@ export function MeetingRoom({ roomCode, isAdmin = false }: MeetingRoomProps) {
     room.on("connected", () => {
       setIsConnected(true)
       setParticipants([room.localParticipant])
-      room.localParticipant.setMicrophoneEnabled(true).catch(() => {})
-      room.localParticipant.setCameraEnabled(true).catch(() => {})
-      room.startAudio().catch(() => {})
     })
 
     room.on("disconnected", () => {
@@ -157,22 +156,30 @@ export function MeetingRoom({ roomCode, isAdmin = false }: MeetingRoomProps) {
 
   const toggleCamera = async () => {
     if (!roomRef.current) return
-    if (cameraOn) {
-      await roomRef.current.localParticipant.setCameraEnabled(false)
-    } else {
-      await roomRef.current.localParticipant.setCameraEnabled(true)
+    try {
+      if (cameraOn) {
+        await roomRef.current.localParticipant.setCameraEnabled(false)
+      } else {
+        await roomRef.current.localParticipant.setCameraEnabled(true)
+      }
+      setCameraOn(!cameraOn)
+    } catch (err) {
+      console.error("Camera toggle failed:", err)
     }
-    setCameraOn(!cameraOn)
   }
 
   const toggleMic = async () => {
     if (!roomRef.current) return
-    if (micOn) {
-      await roomRef.current.localParticipant.setMicrophoneEnabled(false)
-    } else {
-      await roomRef.current.localParticipant.setMicrophoneEnabled(true)
+    try {
+      if (micOn) {
+        await roomRef.current.localParticipant.setMicrophoneEnabled(false)
+      } else {
+        await roomRef.current.localParticipant.setMicrophoneEnabled(true)
+      }
+      setMicOn(!micOn)
+    } catch (err) {
+      console.error("Mic toggle failed:", err)
     }
-    setMicOn(!micOn)
   }
 
   const toggleScreenShare = async () => {
@@ -216,86 +223,96 @@ export function MeetingRoom({ roomCode, isAdmin = false }: MeetingRoomProps) {
   }))
 
   return (
-    <div className="flex-1 flex bg-[#F2F2F2] dark:bg-[#0D0D0D] h-full">
-      <div className="flex-1 flex flex-col relative">
-        <div className="absolute top-3 inset-x-3 z-10 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ParticipantCount count={participants.length} />
-            <ConnectionBadge room={roomRef.current} />
+    <>
+      <div className="flex-1 flex bg-[#F2F2F2] dark:bg-[#0D0D0D] h-full">
+        <div className="flex-1 flex flex-col relative">
+          <div className="absolute top-3 inset-x-3 z-10 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ParticipantCount count={participants.length} />
+              <ConnectionBadge room={roomRef.current} />
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2">
+              <MeetingId roomCode={roomCode} />
+            </div>
+            <MeetingTimer />
           </div>
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <MeetingId roomCode={roomCode} />
-          </div>
-          <MeetingTimer />
-        </div>
 
-        {isAdmin && (
-          <div className="absolute top-14 inset-x-3 z-10">
-            <AdminMeetingBar
-              handRaiseQueue={handRaiseQueue}
-              onApproveHand={handleApproveHand}
-              onDismissHand={handleDismissHand}
-              onMuteParticipant={() => {}}
-              onDisableCamera={() => {}}
-              onRemoveParticipant={() => {}}
-              onStartRecording={handleStartRecording}
-              isRecording={isRecording}
-            />
-          </div>
-        )}
-
-        <div ref={videoRef} className="flex-1 flex items-center justify-center p-4 pt-16 pb-20">
-          {isConnected ? (
-            <VideoGrid
-              participants={participants}
-              localParticipant={roomRef.current?.localParticipant ?? null}
-            />
-          ) : (
-            <div className="flex flex-col items-center gap-3 text-[#666666] dark:text-[#999999]">
-              <div className="w-8 h-8 border-2 border-[#CCCCCC] dark:border-[#666666] border-t-[#0D0D0D] dark:border-t-[#F2F2F2] animate-spin" />
-              <p className="text-sm">Connecting to meeting...</p>
+          {isAdmin && (
+            <div className="absolute top-14 inset-x-3 z-10">
+              <AdminMeetingBar
+                handRaiseQueue={handRaiseQueue}
+                onApproveHand={handleApproveHand}
+                onDismissHand={handleDismissHand}
+                onMuteParticipant={() => {}}
+                onDisableCamera={() => {}}
+                onRemoveParticipant={() => {}}
+                onStartRecording={handleStartRecording}
+                isRecording={isRecording}
+              />
             </div>
           )}
+
+          <div ref={videoRef} className="flex-1 flex items-center justify-center p-4 pt-16 pb-20">
+            {isConnected ? (
+              <VideoGrid
+                participants={participants}
+                localParticipant={roomRef.current?.localParticipant ?? null}
+              />
+            ) : (
+              <div className="flex flex-col items-center gap-3 text-[#666666] dark:text-[#999999]">
+                <div className="w-8 h-8 border-2 border-[#CCCCCC] dark:border-[#666666] border-t-[#0D0D0D] dark:border-t-[#F2F2F2] animate-spin" />
+                <p className="text-sm">{lang === "ar" ? "جارٍ الاتصال..." : "Connecting to meeting..."}</p>
+              </div>
+            )}
+          </div>
+
+          {reaction && (
+            <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-50">
+              <span className="text-6xl" style={{ animation: "bounce 1s ease-out" }}>{reaction}</span>
+            </div>
+          )}
+
+          <MediaControls
+            cameraOn={cameraOn}
+            micOn={micOn}
+            screenShare={screenShare}
+            onToggleCamera={toggleCamera}
+            onToggleMic={toggleMic}
+            onToggleScreenShare={toggleScreenShare}
+            onToggleChat={() => setShowChat(!showChat)}
+            onToggleParticipants={() => setShowParticipants(!showParticipants)}
+            onToggleSettings={() => setShowSettings(true)}
+            onLeave={handleLeave}
+            onReact={handleReact}
+            onRaiseHand={handleRaiseHand}
+            roomCode={roomCode}
+            chatUnread={useChatStore((s) => s.unreadCount)}
+            showChat={showChat}
+            showParticipants={showParticipants}
+          />
         </div>
 
-        {reaction && (
-          <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-50">
-            <span className="text-6xl" style={{ animation: "bounce 1s ease-out" }}>{reaction}</span>
-          </div>
+        {showChat && (
+          <ChatPanel
+            room={roomRef.current}
+            onClose={() => setShowChat(false)}
+          />
         )}
 
-        <MediaControls
-          cameraOn={cameraOn}
-          micOn={micOn}
-          screenShare={screenShare}
-          onToggleCamera={toggleCamera}
-          onToggleMic={toggleMic}
-          onToggleScreenShare={toggleScreenShare}
-          onToggleChat={() => setShowChat(!showChat)}
-          onToggleParticipants={() => setShowParticipants(!showParticipants)}
-          onLeave={handleLeave}
-          onReact={handleReact}
-          onRaiseHand={handleRaiseHand}
-          roomCode={roomCode}
-          chatUnread={useChatStore((s) => s.unreadCount)}
-          showChat={showChat}
-          showParticipants={showParticipants}
-        />
+        {showParticipants && (
+          <ParticipantsPanel
+            participants={participantList}
+            onClose={() => setShowParticipants(false)}
+          />
+        )}
       </div>
 
-      {showChat && (
-        <ChatPanel
-          room={roomRef.current}
-          onClose={() => setShowChat(false)}
-        />
-      )}
-
-      {showParticipants && (
-        <ParticipantsPanel
-          participants={participantList}
-          onClose={() => setShowParticipants(false)}
-        />
-      )}
-    </div>
+      <SettingsPanel
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        room={roomRef.current}
+        roomCode={roomCode}
+      />
+    </>
   )
 }

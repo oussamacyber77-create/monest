@@ -6,6 +6,7 @@ interface RoomActions {
   setPhone: (phone: string) => void
   setRoom: (roomId: string, token: string) => void
   setAdmin: (admin: boolean) => void
+  setConsent: (consent: boolean) => void
   clearRoom: () => void
   reset: () => void
 }
@@ -17,6 +18,7 @@ const initialState: RoomState = {
   identity: "",
   displayName: "",
   isAdmin: false,
+  consentGiven: false,
 }
 
 export const useRoomStore = create<RoomState & RoomActions>()(
@@ -34,6 +36,7 @@ export const useRoomStore = create<RoomState & RoomActions>()(
         }),
       setRoom: (roomId, token) => set({ roomId, liveKitToken: token }),
       setAdmin: (admin) => set({ isAdmin: admin }),
+      setConsent: (consent) => set({ consentGiven: consent }),
       clearRoom: () => set({ roomId: null, liveKitToken: null }),
       reset: () => set(initialState),
     }),
