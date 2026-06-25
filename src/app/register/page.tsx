@@ -287,10 +287,10 @@ function RegisterContent() {
                     </span>
                     <div>
                       {pkg.originalPrice && (
-                        <span className="text-sm text-[#999999] line-through me-2">{pkg.originalPrice.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}</span>
+                        <span className="text-sm text-[#999999] line-through me-2">{pkg.originalPrice.toLocaleString("en-US")} {lang === "ar" ? "ر.س" : "SAR"}</span>
                       )}
                       <span className="text-lg font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-                        {pkg.price.toLocaleString()} {lang === "ar" ? "ر.س" : "SAR"}
+                        {pkg.price.toLocaleString("en-US")} {lang === "ar" ? "ر.س" : "SAR"}
                       </span>
                     </div>
                   </div>
@@ -368,7 +368,7 @@ function RegisterContent() {
                   {lang === "ar" ? "المبلغ" : "Total"}
                 </span>
                 <span className="font-bold text-lg text-[#0D0D0D] dark:text-[#F2F2F2]">
-                  {selectedPlan?.price.toLocaleString() || "—"} {lang === "ar" ? "ر.س" : "SAR"}
+                  {selectedPlan?.price.toLocaleString("en-US") || "—"} {lang === "ar" ? "ر.س" : "SAR"}
                 </span>
               </div>
             </div>

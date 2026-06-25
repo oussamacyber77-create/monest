@@ -41,11 +41,11 @@ export default function MarketingPage() {
               </div>
               <div className="flex justify-between pt-2 border-t border-[#D4D4D4] dark:border-[#333333]">
                 <span className="text-[#666666] dark:text-[#999999]">{lang === "ar" ? "الإنفاق" : "Spend"}</span>
-                <span className="font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{p.spend.toLocaleString()} ر.س</span>
+                <span className="font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{p.spend.toLocaleString("en-US")} ر.س</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[#666666] dark:text-[#999999]">{lang === "ar" ? "الإيرادات" : "Revenue"}</span>
-                <span className="font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{p.revenue.toLocaleString()} ر.س</span>
+                <span className="font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">{p.revenue.toLocaleString("en-US")} ر.س</span>
               </div>
             </div>
           </div>
@@ -65,7 +65,7 @@ export default function MarketingPage() {
                   <p className="font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">{c.name}</p>
                   <p className="text-xs text-[#999999]">{c.platform} • ROAS {c.roas}x</p>
                 </div>
-                <span className="text-xs text-green-600">{c.revenue.toLocaleString()} ر.س</span>
+                <span className="text-xs text-green-600">{c.revenue.toLocaleString("en-US")} ر.س</span>
               </div>
             ))}
           </div>
@@ -83,7 +83,7 @@ export default function MarketingPage() {
                   <p className="text-xs text-[#999999]">{c.platform} • ROAS {c.roas}x</p>
                 </div>
                 <div className="text-end">
-                  <p className="text-xs text-[#DC2626]">{c.revenue.toLocaleString()} ر.س</p>
+                  <p className="text-xs text-[#DC2626]">{c.revenue.toLocaleString("en-US")} ر.س</p>
                   <p className="text-[10px] text-[#999999]">{lang === "ar" ? "يوصى بإيقافها" : "Recommend pause"}</p>
                 </div>
               </div>

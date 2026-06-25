@@ -13,7 +13,7 @@ export interface PricingPlan {
 
 export const pricingPlanTypes: { key: PricingPlanType; label: { ar: string; en: string } }[] = [
   { key: "subscription", label: { ar: "الاشتراك المتكرر", en: "Subscription" } },
-  { key: "lifetime", label: { ar: "الدوام (الأفضل)", en: "Lifetime (Best)" } },
+  { key: "lifetime", label: { ar: "الباقات الدائمة", en: "Lifetime (Best)" } },
 ]
 
 export const pricingPlans: Record<PricingPlanType, PricingPlan[]> = {
@@ -66,7 +66,7 @@ export const pricingPlans: Record<PricingPlanType, PricingPlan[]> = {
   ],
   lifetime: [
     {
-      key: "دوام أساسي",
+      key: "الباقة الأساسية الدائمة",
       price: 4999,
       originalPrice: 9999,
       period: "lifetime",
@@ -78,7 +78,7 @@ export const pricingPlans: Record<PricingPlanType, PricingPlan[]> = {
       },
     },
     {
-      key: "دوام كامل",
+      key: "الباقة الكاملة الدائمة",
       price: 9999,
       originalPrice: 19999,
       period: "lifetime",

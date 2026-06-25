@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { useSettingsStore } from "@/stores/settings-store"
 import { dashboardStats, products, customerSegments, generateSalesDays } from "@/lib/mock-data/dashboard"
-import { Store, TrendingUp, TrendingDown, AlertTriangle, Star } from "lucide-react"
+import { Store, TrendingUp, TrendingDown, AlertTriangle, Star, Link as LinkIcon } from "lucide-react"
+import { getSallaAuthUrl } from "@/lib/salla/config"
 import { GuidedTour } from "@/components/tour/guided-tour"
 import { HelpButton } from "@/components/tour/help-button"
 import { dashboardTourSteps } from "@/components/tour/tour-steps"
@@ -44,13 +45,17 @@ export default function DashboardPage() {
             {lang === "ar" ? "مرحباً بك في منصة Monest" : "Welcome to Monest Platform"}
           </p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 border border-[#D4D4D4] dark:border-[#333333]">
-          <Store size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
+        <a
+          href={getSallaAuthUrl()}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-4 py-2 border border-[#D4D4D4] dark:border-[#333333] hover:border-[#0D0D0D] dark:hover:border-[#F2F2F2] transition-colors"
+        >
+          <LinkIcon size={16} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
           <span className="text-sm font-medium text-[#0D0D0D] dark:text-[#F2F2F2]">
-            {lang === "ar" ? "متجري" : "My Store"}
+            {lang === "ar" ? "ربط متجر سلة" : "Connect Salla Store"}
           </span>
-          <span className="w-2 h-2 bg-green-500" />
-        </div>
+        </a>
       </div>
 
       <div id="tour-dashboard-stats" className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#D4D4D4] dark:bg-[#333333]">
@@ -59,7 +64,7 @@ export default function DashboardPage() {
             <p className="text-xs text-[#666666] dark:text-[#999999] mb-1">{s.label[lang]}</p>
             <div className="flex items-end gap-2">
               <span className="text-xl font-bold text-[#0D0D0D] dark:text-[#F2F2F2]">
-                {s.value.toLocaleString()}{s.suffix || ""}
+                {s.value.toLocaleString("en-US")}{s.suffix || ""}
               </span>
               <span className={"flex items-center gap-0.5 text-[10px] font-medium mb-0.5 " + (s.change >= 0 ? "text-green-600 dark:text-green-400" : "text-[#DC2626]")}>
                 {s.change >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
@@ -127,7 +132,7 @@ export default function DashboardPage() {
                   <Star size={12} className="text-[#0D0D0D] dark:text-[#F2F2F2]" />
                   <span className="text-sm text-[#0D0D0D] dark:text-[#F2F2F2]">{c.name}</span>
                 </div>
-                <span className="text-xs text-[#666666] dark:text-[#999999]">{c.total.toLocaleString()} ر.س</span>
+                <span className="text-xs text-[#666666] dark:text-[#999999]">{c.total.toLocaleString("en-US")} ر.س</span>
               </div>
             ))}
           </div>
