@@ -31,7 +31,7 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="w-60 border-e border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] flex flex-col shrink-0 overflow-y-auto hidden md:flex">
+    <aside className="w-48 border-e border-[#D4D4D4] dark:border-[#333333] bg-white dark:bg-[#0D0D0D] flex flex-col shrink-0 overflow-y-auto hidden md:flex">
       <div className="flex-1 py-3 space-y-5">
         <div>
           <p className="px-4 text-[10px] font-bold text-[#999999] dark:text-[#666666] uppercase tracking-widest mb-1">
