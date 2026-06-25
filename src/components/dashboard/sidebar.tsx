@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname, useRouter } from "next/navigation"
-import { LayoutDashboard, Video, Users, PenTool, Megaphone, Globe, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, Video, Users, PenTool, Megaphone, Globe, Settings, Crown, LogOut } from "lucide-react"
 import { useSettingsStore } from "@/stores/settings-store"
 import { useAuthStore } from "@/stores/auth-store"
 import { cn } from "@/lib/utils"
@@ -18,6 +18,7 @@ const commerceItems = (lang: string) => [
   { href: "/dashboard/content", label: lang === "ar" ? "مركز المحتوى" : "Content Center", icon: PenTool },
   { href: "/dashboard/marketing", label: lang === "ar" ? "مركز التسويق" : "Marketing Center", icon: Megaphone },
   { href: "/dashboard/site", label: lang === "ar" ? "إدارة الموقع" : "Site Management", icon: Globe },
+  { href: "/dashboard/plan", label: lang === "ar" ? "الباقة" : "Plan", icon: Crown },
   { href: "/dashboard/settings", label: lang === "ar" ? "الإعدادات" : "Settings", icon: Settings },
 ]
 
