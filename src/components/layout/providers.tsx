@@ -2,9 +2,15 @@
 
 import { useEffect } from "react"
 import { useSettingsStore } from "@/stores/settings-store"
+import { useAuthStore } from "@/stores/auth-store"
 
 export function Providers() {
   const { direction, theme } = useSettingsStore()
+  const { initialize } = useAuthStore()
+
+  useEffect(() => {
+    initialize()
+  }, [initialize])
 
   useEffect(() => {
     const html = document.documentElement

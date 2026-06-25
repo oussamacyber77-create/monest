@@ -10,17 +10,13 @@ function AdminLoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { direction } = useSettingsStore()
-  const { isAdmin, checkSession, login } = useAuthStore()
+  const { user, isAdmin, login } = useAuthStore()
   const lang = direction === "rtl" ? "ar" : "en"
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    checkSession()
-  }, [])
 
   useEffect(() => {
     if (isAdmin) {
@@ -37,14 +33,8 @@ function AdminLoginForm() {
     }
     setLoading(true)
     try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      login()
+      const res = await login(email, password)
+      if (res.error) throw new Error(res.error)
       const redirect = searchParams.get("redirect") || "/dashboard"
       router.replace(redirect)
     } catch (err) {

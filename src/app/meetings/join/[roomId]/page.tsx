@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, use, useMemo, useCallback } from "react"
+import { useState, useEffect, use, useMemo, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { LogIn, CalendarDays, Clock, User, Phone, Shield, Copy, Check, Users, Headphones, Video, VideoOff, WifiOff, AlertTriangle, XCircle, DoorOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,8 @@ import { PreJoinCameraTest } from "@/components/meeting/pre-join-camera-test"
 import { useRoomStore } from "@/stores/room-store"
 import { useAuthStore } from "@/stores/auth-store"
 import { useSettingsStore } from "@/stores/settings-store"
-import { mockMeetingInfoMap } from "@/lib/mock-data/meetings"
+import { fetchMeetingByRoomCode } from "@/lib/supabase/queries"
+import type { MockMeetingInfo } from "@/lib/mock-data/meetings"
 
 type JoinError =
   | "network"
@@ -53,7 +54,8 @@ export default function JoinPage({ params }: { params: Promise<{ roomId: string 
   const { direction } = useSettingsStore()
   const lang = direction === "rtl" ? "ar" : "en"
 
-  const meetingInfo = mockMeetingInfoMap[roomId]
+  const [meetingInfo, setMeetingInfo] = useState<MockMeetingInfo | null>(null)
+  const [fetching, setFetching] = useState(true)
   const isValidMeeting = !!meetingInfo
   const isHostPresent = meetingInfo?.hostJoined
   const isEnded = meetingInfo?.ended
@@ -69,6 +71,29 @@ export default function JoinPage({ params }: { params: Promise<{ roomId: string 
   const [audioOnly, setAudioOnly] = useState(false)
   const [consentChecked, setConsentChecked] = useState(consentGiven)
   const [phoneError, setPhoneError] = useState("")
+
+  useEffect(() => {
+    async function load() {
+      const data = await fetchMeetingByRoomCode(roomId)
+      if (data) {
+        setMeetingInfo({
+          id: data.room_code,
+          title: { ar: data.title_ar, en: data.title_en },
+          organizer: data.organizer,
+          startTime: data.start_time,
+          password: data.password || "",
+          date: data.date,
+          duration: data.duration,
+          attendees: data.attendees,
+          description: data.description_ar ? { ar: data.description_ar, en: data.description_en || "" } : undefined,
+          hostJoined: data.host_joined,
+          ended: data.ended,
+        })
+      }
+      setFetching(false)
+    }
+    load()
+  }, [roomId])
 
   const validatePhone = useCallback((val: string): string => {
     const digits = val.replace(/\D/g, "")
@@ -193,6 +218,17 @@ export default function JoinPage({ params }: { params: Promise<{ roomId: string 
     } finally {
       setLoading(false)
     }
+  }
+
+  if (fetching) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-[#F2F2F2] dark:bg-[#0D0D0D] min-h-screen">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-[#D4D4D4] dark:border-[#333333] border-t-[#0D0D0D] dark:border-t-[#F2F2F2] animate-spin" />
+          <p className="text-sm text-[#666666] dark:text-[#999999]">{lang === "ar" ? "جاري تحميل الاجتماع..." : "Loading meeting..."}</p>
+        </div>
+      </div>
+    )
   }
 
   return (

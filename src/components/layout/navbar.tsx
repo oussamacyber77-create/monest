@@ -14,12 +14,12 @@ export function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { direction, theme, toggleDirection, toggleTheme } = useSettingsStore()
-  const { isAdmin, isLoading, logout, checkSession } = useAuthStore()
+  const { user, isAdmin, isLoading, logout, initialize } = useAuthStore()
   const [mounted, setMounted] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
-  useEffect(() => { setMounted(true); checkSession() }, [checkSession])
+  useEffect(() => { setMounted(true); initialize() }, [initialize])
 
   // Hide navbar on meeting join/waiting/room pages
   if (pathname.startsWith("/meetings/join/") || pathname.startsWith("/meetings/waiting/") || pathname.startsWith("/meetings/room/")) {
@@ -34,8 +34,8 @@ export function Navbar() {
 
   const lang = direction === "rtl" ? "ar" : "en"
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     router.push("/auth/login")
     setShowLogoutConfirm(false)
   }

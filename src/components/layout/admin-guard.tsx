@@ -1,27 +1,19 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useAuthStore } from "@/stores/auth-store"
 
 export function AdminGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  const { isAdmin, isLoading, checkSession } = useAuthStore()
-  const checked = useRef(false)
+  const { user, isLoading, isAdmin } = useAuthStore()
 
   useEffect(() => {
-    if (!checked.current) {
-      checkSession()
-      checked.current = true
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isLoading && !isAdmin) {
+    if (!isLoading && !user) {
       router.replace("/admin/login?redirect=" + encodeURIComponent(pathname))
     }
-  }, [isLoading, isAdmin, pathname, router])
+  }, [isLoading, user, pathname, router])
 
   if (isLoading) {
     return (
@@ -31,7 +23,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!isAdmin) return null
+  if (!user) return null
 
   return <>{children}</>
 }
